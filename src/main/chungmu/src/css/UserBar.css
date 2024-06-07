@@ -1,0 +1,19 @@
+.UserBar
+{
+    height: 6vh;
+    display: flex;
+    justify-content: end;
+    padding : 0px;
+    margin : 0px;
+}
+
+.UserProfile
+{
+    width: 4vh;
+    height: 4vh;
+    border-radius: 2vh;
+    background-color: cadetblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

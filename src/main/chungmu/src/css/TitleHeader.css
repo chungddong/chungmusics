@@ -1,0 +1,10 @@
+.TitleHeader
+{
+    color: white;
+    display : flex;
+    align-items: center;
+    font-size: 4vh;
+    font-weight: bold;
+    padding : 0px;
+    margin: 0px;
+}

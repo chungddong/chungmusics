@@ -1,0 +1,46 @@
+.DefaultPlaylist
+{
+    box-sizing: border-box;
+}
+
+.listTitle
+{
+    font-size: 2.5vh;
+    font-weight: bold;
+}
+
+
+.listView
+{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+
+
+
+.ListView
+{
+    display: flex;
+    flex-direction: column;
+    margin-top: 2vh;
+    align-items: center;
+    margin-right: 3vh;
+}
+
+
+.ListThumbnail
+{
+    width: 13vh;
+    height: 13vh;
+    background-color: #2e313d;
+    border-radius: 1vh;
+}
+
+.ListText
+{
+    width: 10vh;
+    font-size: 1.5vh;
+    text-align: center;
+}

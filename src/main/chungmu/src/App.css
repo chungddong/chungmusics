@@ -1,0 +1,263 @@
+.box {
+  color: white;
+}
+
+.thumimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2vh;
+}
+
+
+.App {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  color: white;
+  background-color: #121319;
+}
+
+.NavBar {
+  width: 25vh;
+  background-color: #2E313C;
+  display: flex;
+  flex-direction: column;
+}
+
+.NavBtn {
+  height: 5vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 1vh 0vh 1vh 0vh;
+}
+
+.NavBtn:hover {
+  background-color: #424755;
+}
+
+.ViewBox {
+  box-sizing: border-box;
+  width: 70%;
+  padding: 2vh;
+  /* 뷰박스 패딩 조절하려면 여기 */
+}
+
+.PlayerBox {
+  box-sizing: border-box;
+  width: 55vh;
+  height: 100%;
+}
+
+
+
+
+
+.Main {
+  padding: 3vh;
+  flex: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.MusicThumbnail {
+  width: 36vh;
+  height: 36vh;
+  background-color: gray;
+  border-radius: 2vh;
+}
+
+.MusicInfo {
+  margin-top: 2vh;
+  width: 100%;
+  text-align: center;
+}
+
+.SongName {
+  font-weight: bold;
+  font-size: 3vh;
+}
+
+
+.MusicControl {
+  flex: 3;
+  background-color: transparent;
+}
+
+
+
+
+
+/* ----- 모바일 플레이어 관련 -------- */
+
+.M_PlayerBox {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+
+.M_PlayerBar {
+  position: absolute;
+  background-color: transparent;
+  z-index: 0;
+  width: 100%;
+  height: 10vh;
+  bottom: 15vh;
+  padding: 1vh 0vh;
+  box-sizing: border-box;
+  display: none;
+  animation: slideup 0.5s ease-in-out;
+}
+
+.MPlayerBar
+{
+  width: 90%;
+  height: 100%;
+  border-radius: 2vh;
+  background-color: #2E313C;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 1vh;
+  box-sizing: border-box;
+}
+
+.MPlayerBar:hover
+{
+  cursor: pointer;
+}
+
+.MPlayerLeftBox
+{
+  display: flex;
+  flex-direction: row;
+  margin-right: auto;
+  align-items: center;
+}
+
+.MplayerThumb
+{
+  width: 6vh;
+  height: 6vh;
+  background-color: #121319;
+  border-radius: 1vh;
+
+}
+
+.MplayerInfoBox
+{
+  margin-left: 2vh;
+}
+
+.MplayerTitle
+{
+  font-weight: bold;
+  display: block;
+  width: 25vh;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.MplayerArtist
+{
+  display: block;
+  width: 25vh;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
+}
+
+.MPlayerRightBox
+{
+  margin-right: 1vh;
+}
+
+
+
+@keyframes slideup {
+  0% {
+      bottom: -10vh;
+      opacity: 0;
+  }
+  100% {
+      bottom: 15vh;
+      opacity: 1;
+  }
+}
+
+
+
+
+
+@media (max-width: 1000px) {
+
+  .NavBar
+  {
+      display: none;
+  }
+
+}
+
+
+@media (max-width: 800px) {
+  .App {
+      flex-direction: column;
+  }
+
+  .ViewBox {
+      order: -1;
+      width: 100%;
+      height: 80%;
+  }
+
+  .NavBar {
+      display: flex;
+      width: 100%;
+      height: 10vh;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      bottom: 0;
+      background: linear-gradient(to bottom, #121319, #2E313C);
+      /* 모바일 버전 NavBar 색상 변경 여기서 */
+  }
+
+  .NavBtn {
+      flex-direction: column;
+      flex: 1;
+      height: 100%;
+  }
+
+  .PlayerBox {
+      display: none; 
+  }
+
+  .M_PlayerBar {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+  
+  }
+
+  .M_PlayerBox
+  {
+      display: none;
+  }
+
+  
+
+}

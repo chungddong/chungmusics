@@ -1,0 +1,76 @@
+.SearchBar
+{
+    margin-top: 2vh;
+    height: 5vh;
+    background-color: #2E313C;
+    border-radius: 1vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1vh;
+    box-sizing: border-box;
+}
+
+.SearchBarInput
+{
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: 0px;
+    color: white;
+}
+
+.ListItem
+{
+    display: flex;
+    margin: 2vh 0vh 2vh 0vh;
+    width: 100%;
+    align-items: center;
+}
+
+.thumbnailbox
+{
+    width: 6vh;
+    display: flex;
+    align-items: center;
+}
+
+.thumbnailbox img
+{
+    width: 6vh;
+    height: 6vh;
+    border-radius: 1vh;
+}
+
+.infobox
+{
+    margin-left: 3vh;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.MusicTitle
+{
+    font-weight: bold;
+}
+
+.listbtn
+{
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    box-sizing: border-box;
+}
+
+.btns
+{
+    margin-left: 1vh;
+}
+
+.btns:hover
+{
+    cursor: pointer;
+}
