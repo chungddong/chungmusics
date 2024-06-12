@@ -11,6 +11,12 @@
     box-sizing: border-box;
 }
 
+.SearchBar form
+{
+    width: 100%;
+    height: 100%;
+}
+
 .SearchBarInput
 {
     width: 100%;
@@ -20,12 +26,27 @@
     color: white;
 }
 
+.ListContainer {
+    max-height: 50vh;
+    overflow-y: auto; /* 수직 스크롤 활성화 */
+  } 
+
+  /* 스크롤바 숨기기 */
+.ListContainer::-webkit-scrollbar {
+    display: none; /* 웹킷 기반 브라우저 (크롬, 사파리 등) */
+  }
+
 .ListItem
 {
     display: flex;
     margin: 2vh 0vh 2vh 0vh;
     width: 100%;
     align-items: center;
+}
+
+.ListItem:hover
+{
+    background-color: #202127;
 }
 
 .thumbnailbox
@@ -49,6 +70,7 @@
     display: flex;
     flex-direction: column;
 }
+
 
 .MusicTitle
 {

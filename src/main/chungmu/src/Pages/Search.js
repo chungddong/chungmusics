@@ -5,70 +5,84 @@ import TitleHeader from "../Components/TitleHeader";
 import "../css/Search.css";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { IoPlay } from "react-icons/io5";
+import useStore from '../js/store';
 
 function Search() {
-  const [tracks, setTracks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const { setSelectedTrack, setCurrentPlayUrl } = useStore();
 
-  const handleSearch = async (query) => {
+  const handleSearch = async (e) => {
+    if (e.key === 'Enter') {
+      try {
+        const response = await axios.post('/api/search', { query: searchQuery });
+        setResults(response.data);
+      } catch (error) {
+        console.error("Error fetching search results", error);
+      }
+    }
+  };
+
+  const handleListItemClick = async (track) => {
+    setSelectedTrack(track);
     try {
-      const response = await axios.post("/api/search", { query });
-      setTracks(response.data);
+      const response = await axios.post('/api/getPlayUrl', { videoUrl: track.videoUrl });
+      setCurrentPlayUrl(response.data.videoUrl);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching track info", error);
     }
   };
 
   return (
     <div className="Search">
       <UserBar />
-      <TitleHeader title={"Search Music"} />
-      <SearchBar onSearch={handleSearch} />
+      <TitleHeader title={'Search Music'} />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearch={handleSearch} />
       <br />
-      <div>History</div>
-      {tracks.map((track, index) => (
-        <ListItem
-          key={index}
-          thumbnailUrl={track.thumbnailUrl}
-          title={track.title}
-          author={track.author}
-        />
-      ))}
+      <div>
+        History
+      </div>
+      <div className="ListContainer">
+        {results.map((item, index) => (
+          <ListItem
+            key={index}
+            item={item}
+            onClick={() => handleListItemClick(item)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-function SearchBar({ onSearch }) {
-  const [query, setQuery] = useState("");
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSearch(query);
-  };
-
+function SearchBar({ searchQuery, setSearchQuery, handleSearch }) {
   return (
     <div className="SearchBar">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter Music title"
-          className="SearchBarInput"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </form>
+      <input
+        type="text"
+        placeholder="Enter Music title"
+        className="SearchBarInput"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        onKeyPress={handleSearch}
+      />
     </div>
   );
 }
 
-function ListItem({ thumbnailUrl, title, author }) {
+function ListItem({ item, onClick }) {
   return (
-    <div className="ListItem">
+    <div className="ListItem" onClick={onClick}>
       <div className="thumbnailbox">
-        <img src={thumbnailUrl} alt={title} />
+        <img src={item.thumbUrl} alt="thumbnail" />
       </div>
       <div className="infobox">
-        <div className="MusicTitle">{title}</div>
-        <div className="MusicArtist">{author}</div>
+        <div className="MusicTitle">
+          {item.title}
+        </div>
+        <div className="MusicArtist">
+          {item.author}
+        </div>
       </div>
       <div className="listbtn">
         <MdOutlinePlaylistAdd size={30} className="btns" />

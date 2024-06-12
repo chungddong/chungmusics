@@ -1,21 +1,15 @@
-import React, { useState, useEffect  } from 'react';
+import React from 'react';
 import "../css/MusicPlayer.css";
 import MusicControl from "../Components/MusicControl";
-
-import { TbArrowBarToRight } from "react-icons/tb";
-import { TbMenu2 } from "react-icons/tb";
+import { TbArrowBarToRight, TbMenu2 } from "react-icons/tb";
 import useStore from '../js/store';
 
 function MusicPlayer() {
-  const showMPlayer = useStore((state) => state.showMPlayer);
-
-  
-
-
+  const { selectedTrack, showMPlayer } = useStore();
 
   return (
     <div className="MusicPlayer">
-      <div className='plyaerHeader'>
+      <div className='playerHeader'>
         <div className="HeaderBtn">
           <TbArrowBarToRight className='rightarrowBtn' size={35} onClick={() => showMPlayer('none')} />
           <TbMenu2 className='menuBtn' size={35} />
@@ -24,13 +18,14 @@ function MusicPlayer() {
       <div className='MainBox'>
         <div className='AlbumBox'>
           <div className='ThumbNail'>
+            {selectedTrack && <img src={selectedTrack.thumbUrl} alt="thumbnail" />}
           </div>
           <div className="AlbumInfoBox">
             <div className='AlbumName'>
-              대충 노래 제목 공간입니다
+              {selectedTrack ? selectedTrack.title : "대충 노래 제목 공간입니다"}
             </div>
             <div className='AlbumArtist'>
-              대충 가수 이름
+              {selectedTrack ? selectedTrack.author : "대충 가수 이름"}
             </div>
           </div>
         </div>

@@ -28,63 +28,15 @@ public class ChungmusicController {
     public static final String URL = "https://www.youtube.com";
 
     String tracksJSON;
-    
 
     @GetMapping("/api/test")
     public String hello() {
-        try {
-
-            /*long beforeTime = System.currentTimeMillis(); // 코드 실행 전 시간
-
-            long afterTime = System.currentTimeMillis(); // 코드 실행 후 시간
-            long secDiffTime = (afterTime - beforeTime) / 1000; // 코드 실행 전후 시간 차이 계산(초 단위)
-            System.out.println("시간차이(s) : " + secDiffTime);
-
-            YouTubeTrack yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=9k_csTdypRQ");
-
-            // YouTubeTrack testTr = explicitClient.getTracksForSearch("search").get(1);
-
-            afterTime = System.currentTimeMillis(); // 코드 실행 후 시간
-            secDiffTime = (afterTime - beforeTime) / 1000; // 코드 실행 전후 시간 차이 계산(초 단위)
-            System.out.println("시간차이(s) : " + secDiffTime);
-
-            // Stream URL with format
-            final String streamUrl = yTrack.getStream().url();
-
-            afterTime = System.currentTimeMillis(); // 코드 실행 후 시간
-            secDiffTime = (afterTime - beforeTime) / 1000; // 코드 실행 전후 시간 차이 계산(초 단위)
-            System.out.println("시간차이(s) : " + secDiffTime);
-
-            System.out.println(streamUrl);
-            
-
-            // System.out.println(test());*/
-
-            for (String yt : new Search("요루시카").getResults()) {
-             if (yt.toLowerCase().contains("watch")) {
-                System.out.println(yt);
-                Youtube ytt = new Youtube(yt);
-
-            }
-            }
-
-            return "streamUrl";
-
-            /*
-             * for (String yt : new Search("Java").getResults()) {
-             * if (yt.toLowerCase().contains("watch")) {
-             * System.out.println(yt);
-             * }
-             * }
-             */
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        System.err.println(url);
         return "안녕하세요";
     }
 
-    @PostMapping("/api/search") 
+    @PostMapping("/api/search")
     public List<SendTrackData> SearchResult(@RequestBody Map<String, String> payload) {
         String query = payload.get("query");
 
@@ -92,10 +44,8 @@ public class ChungmusicController {
 
         List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
 
-
         try {
 
-            
             TrackList<YouTubeTrack> trackslist = explicitClient.getTracksForSearch(query);
             for (int i = 0; i < trackslist.size(); i++) {
                 String title = trackslist.get(i).getTitle();
@@ -104,22 +54,24 @@ public class ChungmusicController {
                 String videoUrl = trackslist.get(i).getUrl();
                 String thumbUrl = trackslist.get(i).getTrackMetadata().thumbNailUrl();
 
-                SendTrackData tempSTD = new SendTrackData(title,author, playtime, videoUrl, thumbUrl);
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
                 stdlist.add(tempSTD);
-                //System.out.println(i + "번쨰" + ">>>" + title);
+                // System.out.println(i + "번쨰" + ">>>" + title);
 
                 // System.out.println("" + title);
 
             }
 
-            //YouTubeTrack yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=cFgk2PMgPJ4");
-            //System.out.println("Title : " + yTrack.getTitle());
+            // YouTubeTrack yTrack =
+            // explicitClient.getTrack("https://www.youtube.com/watch?v=cFgk2PMgPJ4");
+            // System.out.println("Title : " + yTrack.getTitle());
 
-            //String url = trackslist.get(1).getUrl();
+            // String url = trackslist.get(1).getUrl();
 
-            //String trackJSON = request(api.getForUrlWithParams(url, TRACK_PARAMS)).contentOrThrow();
-            
-            //System.out.println("" + trackJSON);
+            // String trackJSON = request(api.getForUrlWithParams(url,
+            // TRACK_PARAMS)).contentOrThrow();
+
+            // System.out.println("" + trackJSON);
 
             /*
              * for(Youtube yt : new Search("Java").getVideosResults()){
@@ -138,7 +90,7 @@ public class ChungmusicController {
 
     @Controller
     static class MyController {
-        
+
         @GetMapping(path = "/index")
         public String index() {
             return "gamsa";
@@ -146,15 +98,50 @@ public class ChungmusicController {
     }
 
 
+    public String PlayurlResult(String videoUrl)
+    {
+        try {
+
+            YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+            
+
+            String url = "";
+
+            url = yTrack.getStream().url();
+
+
+            return url;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return "";
+    }
+
+
+
+    @PostMapping("/api/getPlayUrl")
+    public Map<String, String> getPlayUrl(@RequestBody Map<String, String> request) {
+        String videoUrl = request.get("videoUrl");
+
+        System.out.println(videoUrl);
+        Map<String, String> response = new HashMap<>();
+
+        String url = PlayurlResult(videoUrl);
+        System.err.println(url);
+        response.put("videoUrl", url); // 실제 URL을 여기에 넣어야 합니다.
+
+        return response;
+    }
 
     public String test() throws Exception {
 
         long beforeTime = System.currentTimeMillis(); // 코드 실행 전 시간
 
         Youtube yt = new Youtube("https://www.youtube.com/watch?v=9k_csTdypRQ");
-        
 
-        
         long afterTime = System.currentTimeMillis(); // 코드 실행 후 시간
         long secDiffTime = (afterTime - beforeTime) / 1000; // 코드 실행 전후 시간 차이 계산(초 단위)
         System.out.println("시간차이(s) : " + secDiffTime);

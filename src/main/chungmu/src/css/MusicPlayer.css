@@ -64,9 +64,18 @@
 {
     width: 36vh;
     height: 40vh;
-    background-color: #444754;
+    background-color: #000000;
     border-radius: 2vh;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ThumbNail img
+{
+    width: 100%;
+    object-fit: cover;
 }
 
 .AlbumInfoBox
