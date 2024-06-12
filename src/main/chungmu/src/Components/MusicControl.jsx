@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { TbPlayerTrackPrevFilled, TbPlayerPlayFilled, TbPlayerPauseFilled, TbPlayerTrackNextFilled, TbArrowsShuffle, TbHeart, TbRepeat } from "react-icons/tb";
 import RangeBar from './RangeBar';
 import useStore from '../js/store';
@@ -7,39 +7,48 @@ function MusicControl() {
   const { currentPlayUrl } = useStore();
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const audioRef = useRef(null);
+  const audioElement = document.getElementById('globalAudio');
 
   useEffect(() => {
-    const audio = audioRef.current;
-    const handleLoadedMetadata = () => setDuration(audio.duration);
-    const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
+    const handleLoadedMetadata = () => setDuration(audioElement.duration);
+    const handleTimeUpdate = () => setCurrentTime(audioElement.currentTime);
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
+    audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audioElement.addEventListener('timeupdate', handleTimeUpdate);
 
     return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
+      audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audioElement.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [currentPlayUrl]);
+  }, []);
 
   useEffect(() => {
-    if (currentPlayUrl) {
-      audioRef.current.src = currentPlayUrl;
-      audioRef.current.play();
-    }
+    const playAudio = async () => {
+      if (currentPlayUrl) {
+        audioElement.pause(); // 기존 오디오 일시 정지
+        audioElement.currentTime = 0; // 오디오 재생 시간 초기화
+        audioElement.src = currentPlayUrl; // 새로운 오디오 소스 설정
+        audioElement.load(); // 오디오 로드
+        try {
+          await audioElement.play(); // 새로운 오디오 재생
+        } catch (error) {
+          console.error("Error playing audio:", error);
+        }
+      }
+    };
+
+    playAudio();
   }, [currentPlayUrl]);
 
   const handleRangeBarChange = (event) => {
     const newTime = event.target.value;
     setCurrentTime(newTime);
-    audioRef.current.currentTime = newTime;
+    audioElement.currentTime = newTime;
   };
 
   return (
     <div className="MusicControl">
       <div className="PlayBar">
-        <audio ref={audioRef} className="audios" controls="" autoPlay></audio>
         <div className="RangeBarBox">
           <RangeBar
             max={duration}
