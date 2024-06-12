@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .track {
+            margin-bottom: 20px;
+        }
+        .track img {
+            max-width: 100px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search YouTube Tracks</h1>
+    <form id="searchForm">
+        <input type="text" id="query" placeholder="Enter search query" required>
+        <button type="submit">Search</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const query = document.getElementById('query').value;
+
+            fetch('/api/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+
+                data.forEach(track => {
+                    const trackDiv = document.createElement('div');
+                    trackDiv.className = 'track';
+
+                    const title = document.createElement('h3');
+                    title.textContent = track.title;
+
+                    const author = document.createElement('p');
+                    author.textContent = `Author: ${track.author}`;
+
+                    const thumbnail = document.createElement('img');
+                    thumbnail.src = track.thumbnailUrl;
+                    thumbnail.alt = track.title;
+
+                    const duration = document.createElement('p');
+                    duration.textContent = `Duration: ${track.duration}`;
+
+                    trackDiv.appendChild(title);
+                    trackDiv.appendChild(author);
+                    trackDiv.appendChild(thumbnail);
+                    trackDiv.appendChild(duration);
+
+                    resultsDiv.appendChild(trackDiv);
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
+</body>
+</html>

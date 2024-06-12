@@ -6,6 +6,8 @@ import TitleHeader from "../Components/TitleHeader";
 import "../css/Playlist.css"
 
 function Playlist() {
+
+    
     return (
         <div className="Playlist">
 
