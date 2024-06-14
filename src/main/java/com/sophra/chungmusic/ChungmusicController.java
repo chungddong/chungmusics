@@ -107,6 +107,8 @@ public class ChungmusicController {
 
             }
 
+            //System.out.println(trackslist.get(3));
+
             // YouTubeTrack yTrack =
             // explicitClient.getTrack("https://www.youtube.com/watch?v=cFgk2PMgPJ4");
             // System.out.println("Title : " + yTrack.getTitle());
@@ -148,11 +150,21 @@ public class ChungmusicController {
 
             YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
 
+            System.out.println(yTrack.getStream().url());
+
+            return yTrack.getStream().url();
+
+            /*YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+
             String url = "";
 
             url = yTrack.getStream().url();
+            
 
-            return url;
+            return url;*/
+
+            //Youtube yt = new Youtube(videoUrl);
+            //System.out.println(yt.streams().getOnlyAudio().getUrl());
 
         } catch (Exception e) {
             e.printStackTrace();
