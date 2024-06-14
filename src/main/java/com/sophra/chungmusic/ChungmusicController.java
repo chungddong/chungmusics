@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +26,9 @@ import io.sfrei.tracksearch.tracks.YouTubeTrack;
 @RestController
 public class ChungmusicController {
 
+    @Autowired
+    private UsersService usersService;
+
     YouTubeClient explicitClient = new YouTubeClient();
 
     public YouTubeAPI api;
@@ -35,6 +43,44 @@ public class ChungmusicController {
         return "안녕하세요";
     }
 
+    // 회원가입 요청 처리
+    @PostMapping("/api/signup")
+    public ResponseEntity<?> registerUser(@Validated @RequestBody Users user, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+
+        // 이메일로 기존 사용자 있는지 확인
+        if (usersService.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already in use");
+        }
+
+        user.setIsAllow(false);
+        user.setLastplayMusic(null);
+
+        // 회원가입 처리
+        Users registeredUser = usersService.registerUser(user);
+        return ResponseEntity.ok(registeredUser);
+
+    }
+
+    @PostMapping("/api/login")
+    public ResponseEntity<?> loginUser(@RequestBody Users loginUser) {
+
+        if(usersService.confirmUser(loginUser))
+        {
+            return ResponseEntity.ok("Confirm");    
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+        
+        
+        
+    }
+
     @PostMapping("/api/search")
     public List<SendTrackData> SearchResult(@RequestBody Map<String, String> payload) {
         String query = payload.get("query");
@@ -42,8 +88,6 @@ public class ChungmusicController {
         System.out.println(query);
 
         List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
-
-        
 
         try {
 
@@ -98,19 +142,15 @@ public class ChungmusicController {
         }
     }
 
-
-    //유튜브 url 던져주면 오디오 url 뱉어주는 함수
-    public String PlayurlResult(String videoUrl)
-    {
+    // 유튜브 url 던져주면 오디오 url 뱉어주는 함수
+    public String PlayurlResult(String videoUrl) {
         try {
 
             YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
-            
 
             String url = "";
 
             url = yTrack.getStream().url();
-
 
             return url;
 
@@ -118,11 +158,8 @@ public class ChungmusicController {
             e.printStackTrace();
         }
 
-
         return "";
     }
-
-
 
     @PostMapping("/api/getPlayUrl")
     public Map<String, String> getPlayUrl(@RequestBody Map<String, String> request) {

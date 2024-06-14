@@ -20,10 +20,10 @@ public class Users {
     @Id
     @GeneratedValue
     private Long id;
-    private String userid;
+    private String userName;
     private String passwd;
     private String email;
-    private Boolean isAllow;
+    private Boolean isAllow;    
     private Long lastplayMusic;
     
     
