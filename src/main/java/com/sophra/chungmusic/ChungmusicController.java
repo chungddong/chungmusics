@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.felipeucelli.javatube.Search;
 import com.github.felipeucelli.javatube.Youtube;
 
 import io.sfrei.tracksearch.clients.youtube.YouTubeAPI;
@@ -43,6 +42,8 @@ public class ChungmusicController {
         System.out.println(query);
 
         List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
+
+        
 
         try {
 
@@ -98,6 +99,7 @@ public class ChungmusicController {
     }
 
 
+    //유튜브 url 던져주면 오디오 url 뱉어주는 함수
     public String PlayurlResult(String videoUrl)
     {
         try {

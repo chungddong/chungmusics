@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from "react-router-dom";
 
 import { BiSolidHome } from "react-icons/bi";
 import { BiSearchAlt2 } from "react-icons/bi";
@@ -13,6 +13,7 @@ import "./css/MusicControl.css";
 import Home from "./Pages/Home";
 import Search from "./Pages/Search";
 import Playlist from "./Pages/Playlist";
+import Login from "./Pages/Login";
 import MusicPlayer from "./Components/MusicPlayer";
 import useStore from './js/store';
 
@@ -42,6 +43,8 @@ function App() {
         </div>
         <div className="ViewBox">
           <Routes>
+            <Route path="/" element={<Navigate to="/Login" />} />
+            <Route path="/Login" element={<Login />} />
             <Route path="/Home" element={<Home />} />
             <Route path="/Search" element={<Search />} />
             <Route path="/Playlist" element={<Playlist />} />

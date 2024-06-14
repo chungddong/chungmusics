@@ -1,0 +1,77 @@
+.Login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    box-sizing: border-box;
+  }
+  
+  .LogoBox {
+    margin-bottom: 20px;
+  }
+  
+  .LogoBox h1 {
+    font-size: 2.5rem;
+    color: #333;
+  }
+  
+  .InputBox {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .login-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .SignUpBox {
+    margin-top: 10px;
+  }
+  
+  .SignUpBox p {
+    color: #555;
+  }
+  
+  .SignUpBox a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .SignUpBox a:hover {
+    text-decoration: underline;
+  }
+  
