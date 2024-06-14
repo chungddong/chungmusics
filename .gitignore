@@ -82,6 +82,3 @@ coverage/
 
 # Optional stylelint cache
 .stylelintcache
-
-src/main/chungmu/package-lock.json
-src/main/chungmu/package.json
