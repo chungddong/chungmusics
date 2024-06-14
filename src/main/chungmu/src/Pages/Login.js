@@ -21,13 +21,14 @@ function Login() {
     axios.post('/api/login', { 
       email: email,
       passwd: password
-    })
+    },{withCredentials : true})
       .then((response) => {
         if (response.data === "Confirm") {
           console.log('Login Success:', response.data);
 
+          window.location.href = '/Home';
           //세션 토큰 저장
-          localStorage.setItem("token", response.data.token);
+          //localStorage.setItem("token", response.data.token);
         }
       })
       .catch((error) => {
@@ -35,6 +36,17 @@ function Login() {
         // 로그인 실패 처리
       });
   };
+
+  //로그아웃 요청하기 -- 다른곳에다 붙여넣기
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('/api/logout', { withCredentials: true }); // withCredentials 옵션 추가
+      window.location.href = '/Login';
+    } catch (error) {
+      console.error('Error logging out', error);
+    }
+  };
+
 
   //회원가입 요청
   const handleSignUpSubmit = (e) => {

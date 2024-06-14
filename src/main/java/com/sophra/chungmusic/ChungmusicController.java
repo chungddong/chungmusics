@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import io.sfrei.tracksearch.clients.youtube.YouTubeAPI;
 import io.sfrei.tracksearch.clients.youtube.YouTubeClient;
 import io.sfrei.tracksearch.tracks.TrackList;
 import io.sfrei.tracksearch.tracks.YouTubeTrack;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class ChungmusicController {
@@ -65,12 +67,14 @@ public class ChungmusicController {
 
     }
 
+    //로그인 요청
     @PostMapping("/api/login")
-    public ResponseEntity<?> loginUser(@RequestBody Users loginUser) {
+    public ResponseEntity<?> loginUser(@RequestBody Users loginUser, HttpSession session) {
 
         if(usersService.confirmUser(loginUser))
         {
-            return ResponseEntity.ok("Confirm");    
+            session.setAttribute("user", loginUser);
+            return ResponseEntity.ok("Confirm");   
         }
         else
         {
@@ -78,8 +82,26 @@ public class ChungmusicController {
         }
         
         
-        
     }
+
+    //로그아웃 요청
+    @GetMapping("/api/logout")
+    public ResponseEntity<?> logoutUser(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
+    //로그인 세션 체크
+    @GetMapping("/api/checkSession")
+    public ResponseEntity<?> checkSession(HttpSession session) {
+        Object user = session.getAttribute("user");
+        if (user != null) {
+            return ResponseEntity.ok("Session is active");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session");
+        }
+    }
+
 
     @PostMapping("/api/search")
     public List<SendTrackData> SearchResult(@RequestBody Map<String, String> payload) {

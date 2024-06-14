@@ -26,6 +26,12 @@ public class UsersService {
         Optional<Users> user = usersRepository.findByEmail(email);
         return user.isPresent(); // 사용자가 존재하면 true, 존재하지 않으면 false 반환
     }
+
+    public Optional<Users> findbyEmail(String email)
+    {
+        Optional<Users> user = usersRepository.findByEmail(email);
+        return user;
+    }
     
     public Boolean confirmUser(Users loginuser) {
         

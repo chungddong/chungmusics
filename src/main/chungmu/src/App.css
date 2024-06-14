@@ -43,7 +43,13 @@
   box-sizing: border-box;
   width: 70%;
   padding: 2vh;
+  
   /* 뷰박스 패딩 조절하려면 여기 */
+}
+
+.logged-out .ViewBox {
+  width: 100%;
+  height: 100%;
 }
 
 .PlayerBox {

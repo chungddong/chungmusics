@@ -3,9 +3,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
   height: 100%;
   box-sizing: border-box;
 }
+
+.SignUp
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
 
 .LogoBox {
   margin-bottom: 2vh;
