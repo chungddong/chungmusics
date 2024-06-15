@@ -6,11 +6,13 @@ import "../css/Search.css";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { IoPlay } from "react-icons/io5";
 import useStore from '../js/store';
+import AddPlaylist from "../Components/AddPlaylist"; // AddPlaylist 컴포넌트 import
 
 function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
   const { setSelectedTrack, setCurrentPlayUrl } = useStore();
+  const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false); // 다이얼로그 상태 state
 
   const handleSearch = async (e) => {
     if (e.key === 'Enter') {
@@ -33,6 +35,14 @@ function Search() {
     }
   };
 
+  const handleAddPlaylistClick = () => {
+    setIsAddPlaylistOpen(true); // 다이얼로그 열기
+  };
+
+  const handleCloseAddPlaylist = () => {
+    setIsAddPlaylistOpen(false); // 다이얼로그 닫기
+  };
+
   return (
     <div className="Search">
       <UserBar />
@@ -48,9 +58,13 @@ function Search() {
             key={index}
             item={item}
             onClick={() => handleListItemClick(item)}
+            onAddPlaylistClick={handleAddPlaylistClick} // 추가: 재생목록 추가 버튼 클릭 시 이벤트 핸들러 전달
           />
         ))}
       </div>
+
+      {/* AddPlaylist 다이얼로그 */}
+      <AddPlaylist isOpen={isAddPlaylistOpen} onClose={handleCloseAddPlaylist} />
     </div>
   );
 }
@@ -70,9 +84,9 @@ function SearchBar({ searchQuery, setSearchQuery, handleSearch }) {
   );
 }
 
-function ListItem({ item, onClick }) {
+function ListItem({ item, onClick, onAddPlaylistClick }) {
   return (
-    <div className="ListItem" onClick={onClick}>
+    <div className="ListItem" >
       <div className="thumbnailbox">
         <img src={item.thumbUrl} alt="thumbnail" />
       </div>
@@ -85,8 +99,8 @@ function ListItem({ item, onClick }) {
         </div>
       </div>
       <div className="listbtn">
-        <MdOutlinePlaylistAdd size={30} className="btns" />
-        <IoPlay size={30} className="btns" />
+      <MdOutlinePlaylistAdd size={30} className="btns" onClick={onAddPlaylistClick} />
+      <IoPlay size={30} className="btns" onClick={onClick} />
       </div>
     </div>
   );

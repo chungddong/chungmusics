@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Playlists")
+@Table(name = "Playlist")
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Playlist {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
+    @Id
+    @GeneratedValue
+    private Long id;
     private String title;
     private String thumbnailUrl;
 

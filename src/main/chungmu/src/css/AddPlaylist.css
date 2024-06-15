@@ -1,0 +1,83 @@
+/* AddPlaylist.css */
+
+.AddPlaylistOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.AddPlaylist {
+  background-color: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.AddPlaylistHeader {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.AddPlaylistHeader input {
+  flex-grow: 1;
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.AddPlaylistHeader button {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.AddPlaylistHeader button:hover {
+  background-color: #0056b3;
+}
+
+.AddPlaylistContent {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.PlaylistList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.PlaylistList li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.AddPlaylistActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.AddPlaylistActions button {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.AddPlaylistActions button:hover {
+  background-color: #0056b3;
+}

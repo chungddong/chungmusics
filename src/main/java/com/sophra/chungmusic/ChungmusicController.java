@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +32,9 @@ public class ChungmusicController {
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private PlaylistRepository playlistRepository;
 
     YouTubeClient explicitClient = new YouTubeClient();
 
@@ -100,6 +105,25 @@ public class ChungmusicController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session");
         }
+    }
+
+    //새로운 재생목록 추가
+    @PostMapping("/api/addPlaylist")
+    public ResponseEntity<?> addPlaylist(@RequestBody Playlist newPlaylist, HttpSession session) {
+        
+        Users user = (Users) session.getAttribute("user");
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("User not authenticated");
+        }
+        
+        Playlist playlist = new Playlist();
+        playlist.setTitle(newPlaylist.getTitle());
+        playlist.setThumbnailUrl("URL");
+        playlist.setUser(user);
+        playlistRepository.save(playlist);
+        
+        return ResponseEntity.ok("Playlist added successfully");
     }
 
 
