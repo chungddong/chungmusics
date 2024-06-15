@@ -1,6 +1,7 @@
 package com.sophra.chungmusic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,9 @@ public class ChungmusicController {
 
     @Autowired
     private PlaylistRepository playlistRepository;
+
+    @Autowired
+    private TrackRepository trackRepository;
 
     YouTubeClient explicitClient = new YouTubeClient();
 
@@ -106,10 +110,10 @@ public class ChungmusicController {
     }
 
     // 새로운 재생목록 추가
-    @PostMapping("/api/addPlaylist")
+    @PostMapping("/api/createPlaylist")
     public ResponseEntity<?> addPlaylist(@RequestBody Map<String, String> payload, HttpSession session) {
 
-        String query = payload.get("query");
+        String query = payload.get("title");    
 
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
@@ -123,7 +127,7 @@ public class ChungmusicController {
         return ResponseEntity.ok("Playlist added successfully");
     }
 
-    //플레이리스트 반환 메서드
+    // 플레이리스트 반환 메서드
     @GetMapping("/api/getPlaylists")
     public ResponseEntity<List<PlaylistDTO>> getPlaylistsByUserId(HttpSession session) {
 
@@ -133,18 +137,45 @@ public class ChungmusicController {
         List<Playlist> playlists = playlistRepository.findByUser(user.get());
 
         List<PlaylistDTO> playlistDTOs = playlists.stream()
-                    .map(playlist -> new PlaylistDTO(
-                            playlist.getId(),
-                            playlist.getTitle(),
-                            playlist.getThumbnailUrl()
-                    ))
-                    .collect(Collectors.toList());
+                .map(playlist -> new PlaylistDTO(
+                        playlist.getId(),
+                        playlist.getTitle(),
+                        playlist.getThumbnailUrl()))
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(playlistDTOs);
 
     }
 
+    // 노래 추가 메서드-여기도 원칙적으로는 세션체크해야할듯
+    @PostMapping("/api/addTracksToPlaylists")
+    public ResponseEntity<?> addTracksToPlaylists(@RequestBody Map<String, String> payload, HttpSession session) {
+        
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
 
+        List<Long> playlistIds = Arrays.stream(payload.get("playlistIds").split(","))
+                                        .map(Long::parseLong)
+                                        .collect(Collectors.toList());
+                                        
+        for(Long playlistId : playlistIds)
+        {
+            System.out.println(playlistId);
+            Playlist list = playlistRepository.findByid(playlistId);
+            Track track = new Track();
+            track.setTitle(payload.get("trackTitle"));
+            track.setAuthor(payload.get("trackAuthor"));
+            track.setPlaytime(payload.get("trackPlaytime"));
+            track.setVideoUrl(payload.get("trackVideoUrl"));
+            track.setThumbUrl(payload.get("trackThumbUrl"));
+            track.setPlaylist(list);
+            track.setUser(user.get());
+
+            trackRepository.save(track);
+        }        
+
+        return ResponseEntity.ok("Tracks added to playlists successfully");
+    }
 
     @PostMapping("/api/search")
     public List<SendTrackData> SearchResult(@RequestBody Map<String, String> payload) {

@@ -7,6 +7,8 @@ const useStore = create((set) => ({
   setSelectedTrack: (track) => set({ selectedTrack: track }),
   currentPlayUrl: null,
   setCurrentPlayUrl: (url) => set({ currentPlayUrl: url }),
+  addPlaylistTrack: null,
+  setAddPlaylistTrack: (track) => set({ addPlaylistTrack: track }),
 }));
 
 export default useStore;

@@ -12,6 +12,7 @@ function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
   const { setSelectedTrack, setCurrentPlayUrl } = useStore();
+  const { addPlaylistTrack, setAddPlaylistTrack } = useStore();
   const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false); // 다이얼로그 상태 state
 
   const handleSearch = async (e) => {
@@ -35,7 +36,8 @@ function Search() {
     }
   };
 
-  const handleAddPlaylistClick = () => {
+  const handleAddPlaylistClick = (track) => {
+    setAddPlaylistTrack(track);
     setIsAddPlaylistOpen(true); // 다이얼로그 열기
   };
 
@@ -58,7 +60,7 @@ function Search() {
             key={index}
             item={item}
             onClick={() => handleListItemClick(item)}
-            onAddPlaylistClick={handleAddPlaylistClick} // 추가: 재생목록 추가 버튼 클릭 시 이벤트 핸들러 전달
+            onAddPlaylistClick={() => handleAddPlaylistClick(item)} // 추가: 재생목록 추가 버튼 클릭 시 이벤트 핸들러 전달
           />
         ))}
       </div>

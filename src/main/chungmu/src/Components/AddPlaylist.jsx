@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/AddPlaylist.css';
 
+import useStore from '../js/store';
+
 function AddPlaylist({ isOpen, onClose }) {
   const [playlistName, setPlaylistName] = useState('');
   const [playlists, setPlaylists] = useState([]);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+
+  const { addPlaylistTrack, setAddPlaylistTrack } = useStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -12,24 +17,54 @@ function AddPlaylist({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
+  // 플레이리스트 동기화
   const fetchPlaylists = async () => {
     try {
-      const response = await axios.get('/api/getPlaylists'); // API 경로에 맞게 수정
+      const response = await axios.get('/api/getPlaylists');
       setPlaylists(response.data);
-      console.log(playlists.title);
     } catch (error) {
       console.error('Error fetching playlists', error);
     }
   };
 
-  const handleAddPlaylist = async () => {
+  const handleCreatePlaylist = async () => {
     if (!playlistName) return;
     try {
-      await axios.post('/api/addPlaylist', { query: playlistName });
+      await axios.post('/api/createPlaylist', { title: playlistName });
       setPlaylistName('');
       fetchPlaylists(); // 새 플레이리스트 추가 후 업데이트
     } catch (error) {
       console.error('Error adding playlist', error);
+    }
+  };
+
+  const handleCheckboxChange = (playlistId) => {
+    setSelectedPlaylists((prevSelected) =>
+      prevSelected.includes(playlistId)
+        ? prevSelected.filter((id) => id !== playlistId)
+        : [...prevSelected, playlistId]
+    );
+  };
+
+  const handleAdd = async () => {
+    try {
+      const track = addPlaylistTrack;
+      const playlistIds = selectedPlaylists.join(',');
+
+      await axios.post('/api/addTracksToPlaylists', { 
+        playlistIds: playlistIds,
+        trackTitle: track.title,
+        trackAuthor: track.author,
+        trackPlaytime : track.playtime,
+        trackVideoUrl: track.videoUrl,
+        trackThumbUrl: track.thumbUrl
+      });
+      
+      setAddPlaylistTrack([]);
+      setSelectedPlaylists([]);
+      onClose();
+    } catch (error) {
+      console.error('Error adding tracks to playlists', error);
     }
   };
 
@@ -45,16 +80,24 @@ function AddPlaylist({ isOpen, onClose }) {
             value={playlistName}
             onChange={(e) => setPlaylistName(e.target.value)}
           />
-          <button onClick={handleAddPlaylist}>Add</button>
+          <button onClick={handleCreatePlaylist}>Create</button>
         </div>
         <div className="AddPlaylistContent">
           <ul className="PlaylistList">
             {playlists.map((playlist) => (
-              <li key={playlist.id}>{playlist.name}</li>
+              <li key={playlist.id}>
+                {playlist.title}
+                <input
+                  type="checkbox"
+                  checked={selectedPlaylists.includes(playlist.id)}
+                  onChange={() => handleCheckboxChange(playlist.id)}
+                />
+              </li>
             ))}
           </ul>
         </div>
         <div className="AddPlaylistActions">
+          <button onClick={handleAdd}>Add</button>
           <button onClick={onClose}>Close</button>
         </div>
       </div>
