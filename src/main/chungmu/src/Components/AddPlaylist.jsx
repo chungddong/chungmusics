@@ -16,6 +16,7 @@ function AddPlaylist({ isOpen, onClose }) {
     try {
       const response = await axios.get('/api/getPlaylists'); // API 경로에 맞게 수정
       setPlaylists(response.data);
+      console.log(playlists.title);
     } catch (error) {
       console.error('Error fetching playlists', error);
     }
@@ -24,7 +25,7 @@ function AddPlaylist({ isOpen, onClose }) {
   const handleAddPlaylist = async () => {
     if (!playlistName) return;
     try {
-      await axios.post('/api/addPlaylist', { name: playlistName });
+      await axios.post('/api/addPlaylist', { query: playlistName });
       setPlaylistName('');
       fetchPlaylists(); // 새 플레이리스트 추가 후 업데이트
     } catch (error) {

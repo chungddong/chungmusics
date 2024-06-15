@@ -5,16 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +26,7 @@ import io.sfrei.tracksearch.clients.youtube.YouTubeClient;
 import io.sfrei.tracksearch.tracks.TrackList;
 import io.sfrei.tracksearch.tracks.YouTubeTrack;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class ChungmusicController {
@@ -72,34 +73,31 @@ public class ChungmusicController {
 
     }
 
-    //로그인 요청
+    // 로그인 요청
     @PostMapping("/api/login")
     public ResponseEntity<?> loginUser(@RequestBody Users loginUser, HttpSession session) {
 
-        if(usersService.confirmUser(loginUser))
-        {
+        if (usersService.confirmUser(loginUser)) {
             session.setAttribute("user", loginUser);
-            return ResponseEntity.ok("Confirm");   
-        }
-        else
-        {
+            return ResponseEntity.ok("Confirm");
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
-        
-        
+
     }
 
-    //로그아웃 요청
+    // 로그아웃 요청
     @GetMapping("/api/logout")
     public ResponseEntity<?> logoutUser(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok("Logged out successfully");
     }
 
-    //로그인 세션 체크
+    // 로그인 세션 체크
     @GetMapping("/api/checkSession")
     public ResponseEntity<?> checkSession(HttpSession session) {
         Object user = session.getAttribute("user");
+        System.out.println("session 유저 : " + user.toString());
         if (user != null) {
             return ResponseEntity.ok("Session is active");
         } else {
@@ -107,24 +105,45 @@ public class ChungmusicController {
         }
     }
 
-    //새로운 재생목록 추가
+    // 새로운 재생목록 추가
     @PostMapping("/api/addPlaylist")
-    public ResponseEntity<?> addPlaylist(@RequestBody Playlist newPlaylist, HttpSession session) {
-        
-        Users user = (Users) session.getAttribute("user");
+    public ResponseEntity<?> addPlaylist(@RequestBody Map<String, String> payload, HttpSession session) {
 
-        if (user == null) {
-            return ResponseEntity.status(401).body("User not authenticated");
-        }
-        
+        String query = payload.get("query");
+
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+
         Playlist playlist = new Playlist();
-        playlist.setTitle(newPlaylist.getTitle());
-        playlist.setThumbnailUrl("URL");
-        playlist.setUser(user);
+        playlist.setThumbnailUrl("");
+        playlist.setTitle(query);
+        playlist.setUser(user.get());
         playlistRepository.save(playlist);
-        
+
         return ResponseEntity.ok("Playlist added successfully");
     }
+
+    //플레이리스트 반환 메서드
+    @GetMapping("/api/getPlaylists")
+    public ResponseEntity<List<PlaylistDTO>> getPlaylistsByUserId(HttpSession session) {
+
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+
+        List<Playlist> playlists = playlistRepository.findByUser(user.get());
+
+        List<PlaylistDTO> playlistDTOs = playlists.stream()
+                    .map(playlist -> new PlaylistDTO(
+                            playlist.getId(),
+                            playlist.getTitle(),
+                            playlist.getThumbnailUrl()
+                    ))
+                    .collect(Collectors.toList());
+
+        return ResponseEntity.ok(playlistDTOs);
+
+    }
+
 
 
     @PostMapping("/api/search")
@@ -153,7 +172,7 @@ public class ChungmusicController {
 
             }
 
-            //System.out.println(trackslist.get(3));
+            // System.out.println(trackslist.get(3));
 
             // YouTubeTrack yTrack =
             // explicitClient.getTrack("https://www.youtube.com/watch?v=cFgk2PMgPJ4");
@@ -200,17 +219,19 @@ public class ChungmusicController {
 
             return yTrack.getStream().url();
 
-            /*YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+            /*
+             * YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+             * 
+             * String url = "";
+             * 
+             * url = yTrack.getStream().url();
+             * 
+             * 
+             * return url;
+             */
 
-            String url = "";
-
-            url = yTrack.getStream().url();
-            
-
-            return url;*/
-
-            //Youtube yt = new Youtube(videoUrl);
-            //System.out.println(yt.streams().getOnlyAudio().getUrl());
+            // Youtube yt = new Youtube(videoUrl);
+            // System.out.println(yt.streams().getOnlyAudio().getUrl());
 
         } catch (Exception e) {
             e.printStackTrace();
