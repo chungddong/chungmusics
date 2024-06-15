@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.felipeucelli.javatube.Youtube;
 
+import io.sfrei.tracksearch.clients.common.ResponseProviderFactory;
+import io.sfrei.tracksearch.clients.common.SharedClient;
 import io.sfrei.tracksearch.clients.soundcloud.SoundCloudClient;
 import io.sfrei.tracksearch.clients.youtube.YouTubeAPI;
 import io.sfrei.tracksearch.clients.youtube.YouTubeClient;
@@ -33,6 +39,7 @@ import io.sfrei.tracksearch.tracks.YouTubeTrack;
 import io.sfrei.tracksearch.tracks.metadata.TrackFormat;
 import io.sfrei.tracksearch.tracks.metadata.TrackStream;
 import jakarta.servlet.http.HttpSession;
+import retrofit2.Retrofit;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -59,18 +66,20 @@ public class ChungmusicController {
     String tracksJSON;
 
     @GetMapping("/api/test")
-    public String hello() throws TrackSearchException {
-        // String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
-        // System.err.println(url);
-        // return url;
+    public String hello() {
 
-        //var yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        String url = PlayurlResult("https://www.youtube.com/watch?v=hwvAh7M3erc");
+        System.err.println(url);
+
+        // var yTrack =
+        // explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
 
         // TrackStream stream = yTrack.getStream();
 
-        YouTubeTrack trackForURL = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        // YouTubeTrack trackForURL =
+        // explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
 
-        System.out.println(trackForURL.getStream());
+        // System.out.println(trackForURL.getStream());
 
         return "yTrack.getStream().url()";
     }
@@ -259,11 +268,6 @@ public class ChungmusicController {
 
                 // System.out.println("" + title);
 
-                TrackStream stream = trackslist.get(0).getStream();
-
-                final String streamUrl = stream.url();
-                final TrackFormat format = stream.format();
-
             }
 
             // System.out.println(trackslist.get(3));
@@ -303,15 +307,41 @@ public class ChungmusicController {
         }
     }
 
+    public static final Map<String, String> TRACK_PARAMS = Map.of("pbj", "1", "hl", "en", "alt", "json");
+
     // 유튜브 url 던져주면 오디오 url 뱉어주는 함수
     public String PlayurlResult(String videoUrl) {
         try {
 
-            /*YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+            YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
 
-            System.out.println(yTrack.getStream().url());
+            Retrofit base = (new Retrofit.Builder()).baseUrl("https://www.youtube.com")
+                    .client(SharedClient.OK_HTTP_CLIENT).addConverterFactory(ResponseProviderFactory.create()).build();
 
-            return yTrack.getStream().url();
+            this.api = (YouTubeAPI) base.create(YouTubeAPI.class);
+
+            String trackJSON = SharedClient.request(this.api.getForUrlWithParams(videoUrl, TRACK_PARAMS))
+                    .contentOrThrow();
+                    
+
+            // URL 값을 저장할 리스트
+            List<String> urlList = new ArrayList<>();
+
+            // JSON 파싱
+            JSONObject jsonObject = new JSONObject(new JSONTokener(trackJSON));
+
+            // 특정 문자열을 포함하는 값을 찾는 함수 호출
+            String searchString = "mime=audio%2Fmp4";
+            findValuesContainingString(jsonObject, searchString, urlList);
+
+            System.out.println(urlList.size());
+
+            // 추출한 값 출력
+            for (String url : urlList) {
+                System.out.println(url);
+            }
+
+            // return yTrack.getStream().url();
 
             /*
              * YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
@@ -324,14 +354,36 @@ public class ChungmusicController {
              * return url;
              */
 
-            Youtube yt = new Youtube(videoUrl);
-            return yt.streams().getOnlyAudio().getUrl();
+            
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return "";
+    }
+
+    /// 재귀적으로 JSON 객체를 탐색하여 특정 문자열을 포함하는 값을 찾는 메서드
+    public static void findValuesContainingString(Object json, String searchString, List<String> resultList) {
+        if (json instanceof JSONObject) {
+            JSONObject jsonObject = (JSONObject) json;
+            Iterator<String> keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                Object value = jsonObject.get(key);
+                if (value instanceof String && ((String) value).contains(searchString)) {
+                    resultList.add((String) value);
+                } else {
+                    findValuesContainingString(value, searchString, resultList);
+                }
+            }
+        } else if (json instanceof JSONArray) {
+            JSONArray jsonArray = (JSONArray) json;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Object value = jsonArray.get(i);
+                findValuesContainingString(value, searchString, resultList);
+            }
+        }
     }
 
     @PostMapping("/api/getPlayUrl")
