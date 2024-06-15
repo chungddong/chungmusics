@@ -3,9 +3,11 @@ package com.sophra.chungmusic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,10 @@ import io.sfrei.tracksearch.clients.youtube.YouTubeClient;
 import io.sfrei.tracksearch.tracks.TrackList;
 import io.sfrei.tracksearch.tracks.YouTubeTrack;
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.RequestParam;
+
+import io.sfrei.tracksearch.exceptions.TrackSearchException;
 
 @RestController
 public class ChungmusicController {
@@ -49,10 +54,16 @@ public class ChungmusicController {
     String tracksJSON;
 
     @GetMapping("/api/test")
-    public String hello() {
-        String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
-        System.err.println(url);
-        return "안녕하세요";
+    public String hello() throws TrackSearchException {
+        //String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        //System.err.println(url);
+        //return url;
+
+        var yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+
+        System.out.println(yTrack.getStream().url());
+
+        return "yTrack.getStream().url()";
     }
 
     // 회원가입 요청 처리
@@ -113,7 +124,7 @@ public class ChungmusicController {
     @PostMapping("/api/createPlaylist")
     public ResponseEntity<?> addPlaylist(@RequestBody Map<String, String> payload, HttpSession session) {
 
-        String query = payload.get("title");    
+        String query = payload.get("title");
 
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
@@ -150,16 +161,17 @@ public class ChungmusicController {
     // 노래 추가 메서드-여기도 원칙적으로는 세션체크해야할듯
     @PostMapping("/api/addTracksToPlaylists")
     public ResponseEntity<?> addTracksToPlaylists(@RequestBody Map<String, String> payload, HttpSession session) {
-        
+
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
 
+        // TODO : 재생목록에 첫 음악 추가일시 썸네일 설정 코드 넣어야함
+
         List<Long> playlistIds = Arrays.stream(payload.get("playlistIds").split(","))
-                                        .map(Long::parseLong)
-                                        .collect(Collectors.toList());
-                                        
-        for(Long playlistId : playlistIds)
-        {
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+
+        for (Long playlistId : playlistIds) {
             System.out.println(playlistId);
             Playlist list = playlistRepository.findByid(playlistId);
             Track track = new Track();
@@ -172,9 +184,46 @@ public class ChungmusicController {
             track.setUser(user.get());
 
             trackRepository.save(track);
-        }        
+        }
 
         return ResponseEntity.ok("Tracks added to playlists successfully");
+    }
+
+    // 모든 음악 트랙 반환 메서드
+    @GetMapping("/api/getAllTracks")
+    public List<SendTrackData> AllTracks(HttpSession session) {
+
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+
+        // 해당 유저의 모든 트랙 리스트 가져오기
+        List<Track> tracks = trackRepository.findByUser(user.get());
+
+        // 전송할 형태의 리스트
+        List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
+
+        // HashSet을 사용하여 중복된 videoUrl 제거
+        Set<String> uniqueVideoUrls = new HashSet<>();
+
+        for (Track track : tracks) {
+            String videoUrl = track.getVideoUrl();
+
+            // 중복된 videoUrl이 이미 추가되었는지 HashSet을 사용하여 확인
+            if (!uniqueVideoUrls.contains(videoUrl)) {
+                String title = track.getTitle();
+                String author = track.getAuthor();
+                String playtime = track.getPlaytime();
+                String thumbUrl = track.getThumbUrl();
+
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
+                stdlist.add(tempSTD);
+
+                // HashSet에 추가하여 중복 체크용 데이터 갱신
+                uniqueVideoUrls.add(videoUrl);
+            }
+        }
+
+        return stdlist;
     }
 
     @PostMapping("/api/search")

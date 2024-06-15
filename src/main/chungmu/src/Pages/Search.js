@@ -60,7 +60,7 @@ function Search() {
             key={index}
             item={item}
             onClick={() => handleListItemClick(item)}
-            onAddPlaylistClick={() => handleAddPlaylistClick(item)} // 추가: 재생목록 추가 버튼 클릭 시 이벤트 핸들러 전달
+            onAddPlaylistClick={() => handleAddPlaylistClick(item)} 
           />
         ))}
       </div>

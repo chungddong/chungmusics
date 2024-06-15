@@ -1,0 +1,70 @@
+.ListContainer {
+    max-height: 50vh;
+    overflow-y: auto; /* 수직 스크롤 활성화 */
+  } 
+
+  /* 스크롤바 숨기기 */
+.ListContainer::-webkit-scrollbar {
+    display: none; /* 웹킷 기반 브라우저 (크롬, 사파리 등) */
+  }
+
+.ListItem
+{
+    display: flex;
+    margin: 2vh 0vh 2vh 0vh;
+    width: 100%;
+    align-items: center;
+}
+
+.ListItem:hover
+{
+    background-color: #202127;
+}
+
+.thumbnailbox
+{
+    width: 6vh;
+    display: flex;
+    align-items: center;
+}
+
+.thumbnailbox img
+{
+    width: 6vh;
+    height: 6vh;
+    border-radius: 1vh;
+}
+
+.infobox
+{
+    margin-left: 3vh;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.MusicTitle
+{
+    font-weight: bold;
+}
+
+.listbtn
+{
+    width: 20%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    box-sizing: border-box;
+}
+
+.btns
+{
+    margin-left: 1vh;
+}
+
+.btns:hover
+{
+    cursor: pointer;
+}
