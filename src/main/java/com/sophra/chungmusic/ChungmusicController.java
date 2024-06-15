@@ -24,14 +24,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.felipeucelli.javatube.Youtube;
 
+import io.sfrei.tracksearch.clients.soundcloud.SoundCloudClient;
 import io.sfrei.tracksearch.clients.youtube.YouTubeAPI;
 import io.sfrei.tracksearch.clients.youtube.YouTubeClient;
+import io.sfrei.tracksearch.tracks.SoundCloudTrack;
 import io.sfrei.tracksearch.tracks.TrackList;
 import io.sfrei.tracksearch.tracks.YouTubeTrack;
+import io.sfrei.tracksearch.tracks.metadata.TrackFormat;
+import io.sfrei.tracksearch.tracks.metadata.TrackStream;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.sfrei.tracksearch.config.TrackSearchConfig;
 import io.sfrei.tracksearch.exceptions.TrackSearchException;
 
 @RestController
@@ -55,13 +60,17 @@ public class ChungmusicController {
 
     @GetMapping("/api/test")
     public String hello() throws TrackSearchException {
-        //String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
-        //System.err.println(url);
-        //return url;
+        // String url = PlayurlResult("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        // System.err.println(url);
+        // return url;
 
-        var yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+        //var yTrack = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
 
-        System.out.println(yTrack.getStream().url());
+        // TrackStream stream = yTrack.getStream();
+
+        YouTubeTrack trackForURL = explicitClient.getTrack("https://www.youtube.com/watch?v=TqFLIZG_aXA");
+
+        System.out.println(trackForURL.getStream());
 
         return "yTrack.getStream().url()";
     }
@@ -250,6 +259,11 @@ public class ChungmusicController {
 
                 // System.out.println("" + title);
 
+                TrackStream stream = trackslist.get(0).getStream();
+
+                final String streamUrl = stream.url();
+                final TrackFormat format = stream.format();
+
             }
 
             // System.out.println(trackslist.get(3));
@@ -293,7 +307,7 @@ public class ChungmusicController {
     public String PlayurlResult(String videoUrl) {
         try {
 
-            YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
+            /*YouTubeTrack yTrack = explicitClient.getTrack(videoUrl);
 
             System.out.println(yTrack.getStream().url());
 
@@ -310,8 +324,8 @@ public class ChungmusicController {
              * return url;
              */
 
-            // Youtube yt = new Youtube(videoUrl);
-            // System.out.println(yt.streams().getOnlyAudio().getUrl());
+            Youtube yt = new Youtube(videoUrl);
+            return yt.streams().getOnlyAudio().getUrl();
 
         } catch (Exception e) {
             e.printStackTrace();
