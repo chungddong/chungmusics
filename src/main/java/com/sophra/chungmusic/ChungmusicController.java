@@ -138,6 +138,7 @@ public class ChungmusicController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session");
         }
     }
+    
 
     // 새로운 재생목록 추가
     @PostMapping("/api/createPlaylist")
@@ -157,8 +158,10 @@ public class ChungmusicController {
         return ResponseEntity.ok("Playlist added successfully");
     }
 
-    // 플레이리스트 반환 메서드
-    @GetMapping("/api/getPlaylists")
+    
+
+    // 모든 플레이리스트 반환 메서드
+    @GetMapping("/api/getAllPlaylists")
     public ResponseEntity<List<PlaylistDTO>> getPlaylistsByUserId(HttpSession session) {
 
         Users loginuser = (Users) session.getAttribute("user");
@@ -177,14 +180,80 @@ public class ChungmusicController {
 
     }
 
+    //사용자가 선택한 플레이리스트에 대한 모든 트랙리스트 반환
+    @GetMapping("/api/getSelectPlaylists")
+    public List<SendTrackData> getSelectPlaylists(HttpSession session, @RequestBody Map<String, String> payload) {
+
+        //세션 처리
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+        
+        long listID = Long.parseLong(payload.get("query"));
+
+        List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
+
+        if(user != null)
+        {
+            Playlist selectlist = playlistRepository.findByid(listID);
+
+            //선택된 리스트id 를 가진 모든 음악트랙 리스트 가져옴
+            List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+
+            for (int i = 0; i < tracks.size(); i++) {
+                String title = tracks.get(i).getTitle();
+                String author = tracks.get(i).getTitle();
+                String playtime = tracks.get(i).getPlaytime();
+                String videoUrl = tracks.get(i).getVideoUrl();
+                String thumbUrl = tracks.get(i).getThumbUrl();
+                
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
+                stdlist.add(tempSTD);
+            }
+
+            return stdlist;
+        }
+
+        return stdlist;
+        
+        //TODO : 플레이리스트 없을 떄 오류 반환해야함
+
+    }
+
+    // 사용자가 요청한 리스트의 다음곡을 반환
+    @PostMapping("/api/getNextSong")
+    public SendTrackData getNextTrack(@RequestBody Map<String, String> payload, HttpSession session) {
+
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+
+        SendTrackData sdf = null;
+
+        long listID = Long.parseLong(payload.get("listID"));
+        String type = payload.get("type");
+        int currentNum = Integer.parseInt(payload.get("currentNum"));
+
+        if(user != null)
+        {
+            System.out.println("요청 리스트 ID : " + listID + " 타입 : " + type
+            + " 현재 번호 : " + currentNum);
+
+            Playlist selectlist = playlistRepository.findByid(listID);
+            List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+
+            System.out.println(tracks.get(currentNum).getTitle());
+        }
+
+        return sdf;
+    }
+
+
+
     // 노래 추가 메서드-여기도 원칙적으로는 세션체크해야할듯
     @PostMapping("/api/addTracksToPlaylists")
     public ResponseEntity<?> addTracksToPlaylists(@RequestBody Map<String, String> payload, HttpSession session) {
 
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
-
-        // TODO : 재생목록에 첫 음악 추가일시 썸네일 설정 코드 넣어야함
 
         List<Long> playlistIds = Arrays.stream(payload.get("playlistIds").split(","))
                 .map(Long::parseLong)

@@ -16,7 +16,7 @@ function Playlist() {
     // 플레이리스트 동기화
     const fetchPlaylists = async () => {
         try {
-            const response = await axios.get('/api/getPlaylists');
+            const response = await axios.get('/api/getAllPlaylists');
             setPlaylists(response.data);
             console.log(response.data);
 
@@ -26,9 +26,17 @@ function Playlist() {
     };
 
     // 재생목록 리스트 아이템 클릭 이벤트
-    const handleListItemClick = (playlist) => {
-        console.log("선택된 재생목록 : " + playlist.title);
-        // 향후 필요한 로직 추가
+    const handleListItemClick = async (playlist) => {
+
+        try {
+            //const response = await axios.post('/api/getSelectPlaylists', { query: playlist.id });
+
+            const response = await axios.post('/api/getNextSong', { listID: playlist.id, type: 'default', currentNum : 0 });
+            //setCurrentPlayUrl(response.data.videoUrl);
+            //setCurrentPlayUrl(response.data.videoUrl);
+        } catch (error) {
+            console.error("Error fetching track info", error);
+        }
     };
 
     return (
