@@ -16,7 +16,7 @@ function Playlist() {
     // 플레이리스트 동기화
     const fetchPlaylists = async () => {
         try {
-            const response = await axios.get('/api/getAllPlaylists');
+            const response = await axios.get('/api/getPlaylists');
             setPlaylists(response.data);
             console.log(response.data);
 
@@ -31,7 +31,7 @@ function Playlist() {
         try {
             //const response = await axios.post('/api/getSelectPlaylists', { query: playlist.id });
 
-            const response = await axios.post('/api/getNextSong', { listID: playlist.id, type: 'default', currentNum : 0 });
+            const response = await axios.post('/api/getNextSong', { listID: playlist.id, type: 0, currentNum : -1 });
             //setCurrentPlayUrl(response.data.videoUrl);
             //setCurrentPlayUrl(response.data.videoUrl);
         } catch (error) {

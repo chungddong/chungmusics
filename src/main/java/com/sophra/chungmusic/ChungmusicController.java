@@ -138,7 +138,6 @@ public class ChungmusicController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No active session");
         }
     }
-    
 
     // 새로운 재생목록 추가
     @PostMapping("/api/createPlaylist")
@@ -158,10 +157,8 @@ public class ChungmusicController {
         return ResponseEntity.ok("Playlist added successfully");
     }
 
-    
-
     // 모든 플레이리스트 반환 메서드
-    @GetMapping("/api/getAllPlaylists")
+    @GetMapping("/api/getPlaylists")
     public ResponseEntity<List<PlaylistDTO>> getPlaylistsByUserId(HttpSession session) {
 
         Users loginuser = (Users) session.getAttribute("user");
@@ -180,23 +177,22 @@ public class ChungmusicController {
 
     }
 
-    //사용자가 선택한 플레이리스트에 대한 모든 트랙리스트 반환
+    // 사용자가 선택한 플레이리스트에 대한 모든 트랙리스트 반환
     @GetMapping("/api/getSelectPlaylists")
     public List<SendTrackData> getSelectPlaylists(HttpSession session, @RequestBody Map<String, String> payload) {
 
-        //세션 처리
+        // 세션 처리
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
-        
+
         long listID = Long.parseLong(payload.get("query"));
 
         List<SendTrackData> stdlist = new ArrayList<SendTrackData>();
 
-        if(user != null)
-        {
+        if (user != null) {
             Playlist selectlist = playlistRepository.findByid(listID);
 
-            //선택된 리스트id 를 가진 모든 음악트랙 리스트 가져옴
+            // 선택된 리스트id 를 가진 모든 음악트랙 리스트 가져옴
             List<Track> tracks = trackRepository.findByPlaylist(selectlist);
 
             for (int i = 0; i < tracks.size(); i++) {
@@ -205,7 +201,7 @@ public class ChungmusicController {
                 String playtime = tracks.get(i).getPlaytime();
                 String videoUrl = tracks.get(i).getVideoUrl();
                 String thumbUrl = tracks.get(i).getThumbUrl();
-                
+
                 SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
                 stdlist.add(tempSTD);
             }
@@ -214,8 +210,8 @@ public class ChungmusicController {
         }
 
         return stdlist;
-        
-        //TODO : 플레이리스트 없을 떄 오류 반환해야함
+
+        // TODO : 플레이리스트 없을 떄 오류 반환해야함
 
     }
 
@@ -226,27 +222,55 @@ public class ChungmusicController {
         Users loginuser = (Users) session.getAttribute("user");
         Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
 
-        SendTrackData sdf = null;
+        SendTrackData std = new SendTrackData();
 
         long listID = Long.parseLong(payload.get("listID"));
-        String type = payload.get("type");
+        int type = Integer.parseInt(payload.get("type")); //TODO : enum 사용하기
         int currentNum = Integer.parseInt(payload.get("currentNum"));
 
-        if(user != null)
-        {
+        if (user != null) {
             System.out.println("요청 리스트 ID : " + listID + " 타입 : " + type
-            + " 현재 번호 : " + currentNum);
+                    + " 현재 번호 : " + currentNum);
 
-            Playlist selectlist = playlistRepository.findByid(listID);
-            List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+            try {
 
-            System.out.println(tracks.get(currentNum).getTitle());
+                Playlist selectlist = playlistRepository.findByid(listID);
+                List<Track> tracks = trackRepository.findAllByOrderBylistDesc(selectlist);
+
+                for(int i = 0; i < tracks.size(); i++)
+                {
+                    System.out.println("요청 트랙 ID : " + tracks.get(i).getId()
+                     + " 제목 : " + tracks.get(i).getTitle());
+                }
+                int nextNum = currentNum + 1;
+
+                if (type == 0) {
+
+                    System.out.println("실행 : " + nextNum);
+                    Track nextTrack = tracks.get(nextNum);
+                    System.out.println(nextTrack.getTitle());
+
+                    std.setAuthor(nextTrack.getAuthor());
+                    std.setPlaytime(nextTrack.getPlaytime());
+                    std.setThumbUrl(nextTrack.getThumbUrl());
+                    std.setVideoUrl(nextTrack.getVideoUrl());
+                    std.setTitle(nextTrack.getTitle());
+
+                    return std;
+                    
+                } else // 랜덤재생인 경우
+                {
+                    // TODO : 현재 번호 제외한 랜덤 번호 선택해서 반환
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
-        return sdf;
+        return std;
     }
-
-
 
     // 노래 추가 메서드-여기도 원칙적으로는 세션체크해야할듯
     @PostMapping("/api/addTracksToPlaylists")
@@ -259,16 +283,15 @@ public class ChungmusicController {
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
 
-        //playlistids 의 모든 playlistid 를 받아와서 모두 넣기
+        // playlistids 의 모든 playlistid 를 받아와서 모두 넣기
         for (Long playlistId : playlistIds) {
             System.out.println(playlistId);
             Playlist list = playlistRepository.findByid(playlistId);
 
             List<Track> tracks = trackRepository.findByPlaylist(list);
             System.out.println("리스트 이름 : " + list.getTitle() + ", 갯수 : " + tracks.size());
-            
-            if(tracks.size() < 1)
-            {
+
+            if (tracks.size() < 1) {
                 System.out.println("리스트 썸네일 설정");
                 list.setThumbnailUrl(payload.get("trackThumbUrl"));
                 playlistRepository.save(list);
@@ -404,7 +427,6 @@ public class ChungmusicController {
 
             String trackJSON = SharedClient.request(this.api.getForUrlWithParams(videoUrl, TRACK_PARAMS))
                     .contentOrThrow();
-                    
 
             // URL 값을 저장할 리스트
             List<String> urlList = new ArrayList<>();
@@ -435,8 +457,6 @@ public class ChungmusicController {
              * 
              * return url;
              */
-
-            
 
         } catch (Exception e) {
             e.printStackTrace();
