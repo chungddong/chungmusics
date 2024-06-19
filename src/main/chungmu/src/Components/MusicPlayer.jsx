@@ -45,6 +45,8 @@ function MusicPlayer() {
 
           </div>
 
+          재생목록이 없습니다.
+
 
 
         </div>

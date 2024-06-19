@@ -70,8 +70,8 @@ function ListView({ playlist, onItemClick }) {
     return (
         <div className="ListView" onClick={onItemClick}>
             <div className="ListThumbnail">
-                {playlist && playlist.thumbUrl ? (
-                    <img src={playlist.thumbUrl} alt="thumbnail" />
+                {playlist && playlist.thumbnailUrl ? (
+                    <img src={playlist.thumbnailUrl} alt="thumbnail" />
                 ) : null}
             </div>
             <div className="ListText">

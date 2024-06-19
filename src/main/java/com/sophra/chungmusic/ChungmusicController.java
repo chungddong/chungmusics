@@ -1,5 +1,6 @@
 package com.sophra.chungmusic;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -189,9 +190,21 @@ public class ChungmusicController {
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
 
+        //playlistids 의 모든 playlistid 를 받아와서 모두 넣기
         for (Long playlistId : playlistIds) {
             System.out.println(playlistId);
             Playlist list = playlistRepository.findByid(playlistId);
+
+            List<Track> tracks = trackRepository.findByPlaylist(list);
+            System.out.println("리스트 이름 : " + list.getTitle() + ", 갯수 : " + tracks.size());
+            
+            if(tracks.size() < 1)
+            {
+                System.out.println("리스트 썸네일 설정");
+                list.setThumbnailUrl(payload.get("trackThumbUrl"));
+                playlistRepository.save(list);
+            }
+
             Track track = new Track();
             track.setTitle(payload.get("trackTitle"));
             track.setAuthor(payload.get("trackAuthor"));
