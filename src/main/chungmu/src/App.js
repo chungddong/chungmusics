@@ -82,7 +82,7 @@ function App() {
             </div>
 
             <div className="M_PlayerBar" onClick={() => document.querySelector('.M_PlayerBox').style.display = 'flex'}>
-              {/* M_PlayerBar 내용 */}
+              <MPlayerBar/>
             </div>
           </>
         )}

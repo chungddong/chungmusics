@@ -36,7 +36,20 @@
     height: 5vh;
     margin-top: 3vh;
     display: flex;
+    justify-content: center;
 }
+
+.button {
+    width: 15vh;
+    background-color: transparent;
+    border: 0px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 
 .bottom
 {
@@ -45,11 +58,18 @@
     height: 5vh;
     margin-top: 5vh;
     display: flex;
+    justify-content: center;
 }
+
+
 
 .trackBtn
 {
-    flex: 1;
+}
+
+.trackBtn:hover
+{
+    cursor: pointer;
 }
 
 

@@ -29,7 +29,7 @@ function Search() {
   const handleListItemClick = async (track) => {
     setSelectedTrack(track);
     try {
-      const response = await axios.post('/api/getPlayUrl', { videoUrl: track.videoUrl });
+      const response = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
       setCurrentPlayUrl(response.data.videoUrl);
     } catch (error) {
       console.error("Error fetching track info", error);

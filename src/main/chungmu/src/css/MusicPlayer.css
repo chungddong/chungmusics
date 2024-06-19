@@ -6,17 +6,15 @@
     box-sizing : border-box;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     background-color: #2e313d;
     /* 플레이어 내부 패딩 조절 하려면 여기 */
 }
 
-.plyaerHeader
+.playerHeader
 {
     height: 11.5vh;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
     justify-content: center;
 }
 
@@ -26,6 +24,7 @@
     height: 100%;
     display: flex;
     align-items: end;
+    justify-content: center;
     flex-direction: row;
 }
 
@@ -97,3 +96,44 @@
     margin-top: 2vh;
     box-sizing: border-box;
 }
+
+.PlayListModal {
+    background-color: red;
+    animation: slide-up 0.5s ease-out forwards;
+    
+}
+
+.playlistHeader
+{
+    width: 44vh;
+    display: flex;
+    align-items: center;
+    margin-top: 5vh;
+}
+
+.playlistHeader h1
+{
+    margin-right: auto;
+}
+
+.playlistBtn:hover
+{
+    cursor: pointer;
+}
+
+
+@keyframes slide-up {
+    0% {
+        transform: translateY(600%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+
+  
+  
+  
+ 

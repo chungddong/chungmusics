@@ -9,6 +9,9 @@ const useStore = create((set) => ({
   setCurrentPlayUrl: (url) => set({ currentPlayUrl: url }),
   addPlaylistTrack: null,
   setAddPlaylistTrack: (track) => set({ addPlaylistTrack: track }),
+
+  isOpenPlaylist: false,
+  togglePlaylist: () => set(state => ({ isOpenPlaylist: !state.isOpenPlaylist })),
 }));
 
 export default useStore;
