@@ -20,6 +20,7 @@ import axios from 'axios';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // 세션 체크 중인지 여부를 확인하기 위한 상태
+  
 
   useEffect(() => {
     checkSession(); // 컴포넌트가 마운트될 때 세션 체크를 시작
@@ -77,11 +78,8 @@ function App() {
               <MusicPlayer />
             </div>
 
-            <div className="M_PlayerBox" style={{ display: 'none' }}>
-              <MusicPlayer />
-            </div>
 
-            <div className="M_PlayerBar" onClick={() => document.querySelector('.M_PlayerBox').style.display = 'flex'}>
+            <div className="M_PlayerBar" onClick={() => document.querySelector('.PlayerBox').style.display = 'flex'}>
               <MPlayerBar/>
             </div>
           </>

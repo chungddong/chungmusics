@@ -8,38 +8,51 @@ import useStore from '../js/store';
 import '../css/MusicControl.css';
 
 function MusicControl() {
-  const { currentPlayUrl, togglePlaylist } = useStore();
+  const { currentPlayUrl, togglePlaylist, currentPlaylist, currentPlayTrackNum } = useStore();
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioElement = document.getElementById('globalAudio');
 
+  
+
+  const [isChangingSong, setIsChangingSong] = useState(false);
+
   useEffect(() => {
     const handleLoadedMetadata = () => setDuration(audioElement.duration);
     const handleTimeUpdate = () => setCurrentTime(audioElement.currentTime);
+    const handleEnded = () => nextSong();
 
     audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
     audioElement.addEventListener('timeupdate', handleTimeUpdate);
+    audioElement.addEventListener('ended', handleEnded);
+    
 
     return () => {
       audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audioElement.removeEventListener('timeupdate', handleTimeUpdate);
+      audioElement.removeEventListener('ended', handleEnded);
     };
   }, []);
 
   useEffect(() => {
     const playAudio = async () => {
       if (currentPlayUrl) {
-        audioElement.pause(); // 기존 오디오 일시 정지
-        audioElement.currentTime = 0; // 오디오 재생 시간 초기화
-        audioElement.src = currentPlayUrl; // 새로운 오디오 소스 설정
-        audioElement.load(); // 오디오 로드
-        setIsPlaying(true);
         try {
-          await audioElement.play(); // 새로운 오디오 재생
-          setIsPlaying(true); // 재생 상태로 설정
+          // 기존 재생 중지 및 초기화
+          await audioElement.pause();
+          audioElement.currentTime = 0;
+  
+          // 새 소스 설정 및 로드
+          audioElement.src = currentPlayUrl;
+          await audioElement.load();
+  
+          // 재생 시도
+          await audioElement.play();
+          setIsPlaying(true);
         } catch (error) {
-          console.error("Error playing audio:", error);
+          console.error("Error playing audio :", error);
+          setIsPlaying(false);
         }
       }
     };
@@ -64,11 +77,27 @@ function MusicControl() {
     setIsPlaying(!isPlaying); // 재생 상태 토글
   };
 
+  const prevSong = () => {
+    
+  }
+  
+
+  const nextSong = () => {
+    console.log("다음곡으로 넘어가야함");
+    console.log("현재 트랙 NUM : " + currentPlayTrackNum);
+    console.log("현재 재생목록 ID : " + currentPlaylist);
+
+    
+    
+  }
+
   //테스트용
   const handleTestClick = () => {
     console.log("클릭");
-    
-};
+
+  };
+
+
 
   return (
     <div className="MusicControl">
@@ -91,9 +120,9 @@ function MusicControl() {
 
           <div className="button">
             {isPlaying ? (
-              <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause}/>
+              <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause} />
             ) : (
-              <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause}/>
+              <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause} />
             )}
           </div>
 
@@ -105,7 +134,7 @@ function MusicControl() {
         <div className="bottom">
 
           <div className="button">
-            <TbPlaylist className="trackBtn" size={40} onClick={handleTestClick}/>
+            <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist} />
           </div>
 
           <div className="button">
