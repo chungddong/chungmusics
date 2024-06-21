@@ -19,12 +19,18 @@
   background-color: #121319;
 }
 
+#topNav {
+  margin-top: 9vh;
+}
+
 .NavBar {
   width: 25vh;
   background-color: #2E313C;
   display: flex;
   flex-direction: column;
 }
+
+
 
 .NavBtn {
   height: 5vh;
@@ -153,6 +159,14 @@
 
 }
 
+.MplayerThumb img
+{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1vh;
+}
+
 .MplayerInfoBox
 {
   margin-left: 2vh;
@@ -195,6 +209,12 @@
   }
 }
 
+@media (min-width: 800px) {
+  .PlayerBox {
+    display: flex;
+  }
+}
+
 
 
 
@@ -222,6 +242,10 @@
       order: -1;
       width: 100%;
       height: 80%;
+  }
+
+  #topNav {
+    margin-top: 0;
   }
 
   .NavBar {

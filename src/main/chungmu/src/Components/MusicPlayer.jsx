@@ -37,8 +37,8 @@ function MusicPlayer() {
       <div className="PlayerContainer" style={{ display: isOpenPlaylist ? 'none' : 'block' }}>
         <div className='playerHeader'>
           <div className="HeaderBtn">
-            <TbArrowBarToRight className='rightarrowBtn' size={35} onClick={() => showMPlayer('none')} />
-            <TbMenu2 className='menuBtn' size={35} />
+            <TbArrowBarToRight className='rightarrowBtn' size={35} onClick={() => document.querySelector('.PlayerBox').style.display = 'none'} />
+            
           </div>
         </div>
         <div className='MainBox'>

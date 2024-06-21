@@ -9,6 +9,8 @@ import { IoPlay } from "react-icons/io5";
 
 import useStore from '../js/store';
 
+import "../css/Home.css";
+
 
 function Home() {
 

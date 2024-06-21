@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, Navigate  } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
 
 import { BiSolidHome } from "react-icons/bi";
 import { BiSearchAlt2 } from "react-icons/bi";
@@ -15,15 +15,37 @@ import Login from './Pages/Login';
 import MusicPlayer from './Components/MusicPlayer';
 import PrivateRoute from './Components/PrivateRoute';
 import axios from 'axios';
+import useStore from './js/store';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // 세션 체크 중인지 여부를 확인하기 위한 상태
+
+  const { selectedTrack } = useStore();
   
+
 
   useEffect(() => {
     checkSession(); // 컴포넌트가 마운트될 때 세션 체크를 시작
+
+    const handleResize = () => {
+      const playerBox = document.querySelector('.PlayerBox');
+      if (window.innerWidth >= 800) {
+        playerBox.style.display = 'flex';
+      } else {
+        playerBox.style.display = 'none'; // 기본 display 설정
+      }
+    };
+  
+    window.addEventListener('resize', handleResize);
+    
+    // 초기 실행 시 현재 크기 체크
+    handleResize();
+  
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const checkSession = async () => {
@@ -80,7 +102,7 @@ function App() {
 
 
             <div className="M_PlayerBar" onClick={() => document.querySelector('.PlayerBox').style.display = 'flex'}>
-              <MPlayerBar/>
+              <MPlayerBar selectedTrack={selectedTrack}/>
             </div>
           </>
         )}
@@ -94,7 +116,7 @@ function NavButtons() {
 
   return (
     <>
-      <div className="NavBtn" onClick={() => navigate("/Home")}>
+      <div className="NavBtn" id='topNav' onClick={() => navigate("/Home")}>
         <BiSolidHome size={23} />
         Home
       </div>
@@ -110,18 +132,24 @@ function NavButtons() {
   );
 }
 
-function MPlayerBar() {
+function MPlayerBar({ selectedTrack }) {
+  if (!selectedTrack) {
+    return null; // selectedTrack가 null이거나 비어 있으면 아무 것도 렌더링하지 않음
+  }
+
   return (
     <div className='MPlayerBar'>
       <div className='MPlayerLeftBox'>
         <div className='MplayerThumb'>
+          {selectedTrack && <img src={selectedTrack.thumbUrl} alt="thumbnail" />}
         </div>
         <div className='MplayerInfoBox'>
           <div className='MplayerTitle'>
-            대충 노래 제목 공간입니다
+            {selectedTrack ? selectedTrack.title : "대충 노래 제목 공간입니다"}
           </div>
+          
           <div className='MplayerArtist'>
-            대충 가수 이름
+            {selectedTrack ? selectedTrack.author : "대충 가수 이름"}
           </div>
         </div>
       </div>

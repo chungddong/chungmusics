@@ -1,36 +1,29 @@
-
-
-.PlayBar
-{
-    width : 100%;
+.PlayBar {
+    width: 100%;
     display: flex;
-    align-items : center;
+    align-items: center;
     justify-content: center;
 }
 
-.audios
-{
+.audios {
     display: block;
 }
 
-.RangeBarBox
-{
+.RangeBarBox {
     width: 38vh;
 }
 
 
-.PlayControl
-{
+.PlayControl {
     width: 100%;
     margin-top: 2vh;
-    display : flex;
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-.top
-{
+.top {
     color: white;
     width: 44vh;
     height: 5vh;
@@ -51,8 +44,7 @@
 
 
 
-.bottom
-{
+.bottom {
     color: white;
     width: 44vh;
     height: 5vh;
@@ -63,15 +55,11 @@
 
 
 
-.trackBtn
-{
-}
+.trackBtn {}
 
-.trackBtn:hover
-{
+.trackBtn:hover {
     cursor: pointer;
 }
-
 
 
 
