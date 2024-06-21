@@ -12,13 +12,13 @@ function Playlist() {
 
     const { currentPlayTrackNum, setCurrentPlayTrackNum,
         setSelectedTrack, setCurrentPlayUrl, setCurrentPlaylist,
-        setCurrentPlayType } = useStore();
+        setCurrentPlayType, currentPlaylist } = useStore();
 
 
 
     useEffect(() => {
         fetchPlaylists();
-    }, []);
+    }, [currentPlaylist]);
 
     // 플레이리스트 동기화
     const fetchPlaylists = async () => {
@@ -36,14 +36,16 @@ function Playlist() {
     const handleListItemClick = async (playlist) => {
 
         try {
-            //현재 재생목록 설정
-            setCurrentPlaylist(playlist.id);
-            setCurrentPlayType(0); //일반적인 재생인 경우에는 재생타입을 0 으로 설정(순서재생)
             //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
             const response = await axios.post('/api/getNextSong', { listID: playlist.id, type: 0, currentNum: -1 });
 
             //현재 재생 트랙 번호를 0 번째로 설정
             setCurrentPlayTrackNum(0);
+
+            //현재 재생목록 설정
+            console.log(playlist.id + "입니다");
+            setCurrentPlaylist(playlist.id);
+            setCurrentPlayType(0); //일반적인 재생인 경우에는 재생타입을 0 으로 설정(순서재생)
             
             const track = response.data;
 
@@ -53,6 +55,9 @@ function Playlist() {
             //첫곡 플레이 url 받아오기
             const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
             setCurrentPlayUrl(urlInfo.data.videoUrl);
+
+            //console.log("playlist : " + currentPlaylist);
+            //console.log("tracknum : " + currentPlayTrackNum);
 
 
         } catch (error) {

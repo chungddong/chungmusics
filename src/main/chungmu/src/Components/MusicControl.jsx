@@ -6,15 +6,18 @@ import {
 import RangeBar from './RangeBar';
 import useStore from '../js/store';
 import '../css/MusicControl.css';
+import axios from 'axios';
 
 function MusicControl() {
-  const { currentPlayUrl, togglePlaylist, currentPlaylist, currentPlayTrackNum } = useStore();
+  const { currentPlayUrl, togglePlaylist, currentPlaylist,
+    currentPlayTrackNum, currentPlayType, setCurrentPlayTrackNum,
+    setSelectedTrack, setCurrentPlayUrl } = useStore();
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioElement = document.getElementById('globalAudio');
 
-  
+
 
   const [isChangingSong, setIsChangingSong] = useState(false);
 
@@ -26,14 +29,14 @@ function MusicControl() {
     audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
     audioElement.addEventListener('timeupdate', handleTimeUpdate);
     audioElement.addEventListener('ended', handleEnded);
-    
+
 
     return () => {
       audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audioElement.removeEventListener('timeupdate', handleTimeUpdate);
       audioElement.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [currentPlayTrackNum]);
 
   useEffect(() => {
     const playAudio = async () => {
@@ -42,11 +45,11 @@ function MusicControl() {
           // 기존 재생 중지 및 초기화
           await audioElement.pause();
           audioElement.currentTime = 0;
-  
+
           // 새 소스 설정 및 로드
           audioElement.src = currentPlayUrl;
           await audioElement.load();
-  
+
           // 재생 시도
           await audioElement.play();
           setIsPlaying(true);
@@ -78,17 +81,44 @@ function MusicControl() {
   };
 
   const prevSong = () => {
-    
-  }
-  
 
-  const nextSong = () => {
+  }
+
+
+  const nextSong = async () => {
     console.log("다음곡으로 넘어가야함");
     console.log("현재 트랙 NUM : " + currentPlayTrackNum);
     console.log("현재 재생목록 ID : " + currentPlaylist);
 
-    
-    
+    //현재 재생목록이 비어있지 않다면
+    if (currentPlaylist != null) {
+
+      //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
+      const response = await axios.post('/api/getNextSong',
+        {
+          listID: currentPlaylist, type: currentPlayType,
+          currentNum: currentPlayTrackNum
+        });
+
+      const track = response.data;
+      const playNum = currentPlayTrackNum + 1;
+
+      //현재 재생 트랙 번호를 다음 번호로 설정
+      setCurrentPlayTrackNum(playNum);
+
+      //받아온 트랙데이터로 플레이어 설정
+      setSelectedTrack(track);
+
+      //플레이 url 받아오기
+      const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
+      setCurrentPlayUrl(urlInfo.data.videoUrl);
+
+      console.log("tracknum : " + currentPlayTrackNum);
+
+    }
+
+
+
   }
 
   //테스트용
