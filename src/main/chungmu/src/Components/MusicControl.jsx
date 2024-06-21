@@ -100,6 +100,7 @@ function MusicControl() {
           currentNum: currentPlayTrackNum
         });
 
+      //TODO : 여기서 response 로 trackNum 을 가져와야 할것임 - 랜덤재생 위해서
       const track = response.data;
       const playNum = currentPlayTrackNum + 1;
 
