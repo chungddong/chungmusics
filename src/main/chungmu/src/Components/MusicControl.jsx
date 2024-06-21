@@ -109,107 +109,107 @@ function MusicControl() {
 
       console.log("tracknum : " + currentPlayTrackNum);
 
+    }
   }
 
-  //TODO : 오디오 맨끝이면 0번쨰 트랙 반환하게
+    //TODO : 오디오 맨끝이면 0번쨰 트랙 반환하게
 
-  //다음 곡으로 넘어가기
-  const nextSong = async () => {
-    console.log("다음곡으로 넘어가야함");
-    console.log("현재 트랙 NUM : " + currentPlayTrackNum);
-    console.log("현재 재생목록 ID : " + currentPlaylist);
+    //다음 곡으로 넘어가기
+    const nextSong = async () => {
+      console.log("다음곡으로 넘어가야함");
+      console.log("현재 트랙 NUM : " + currentPlayTrackNum);
+      console.log("현재 재생목록 ID : " + currentPlaylist);
 
-    //현재 재생목록이 비어있지 않다면
-    if (currentPlaylist != null) {
+      //현재 재생목록이 비어있지 않다면
+      if (currentPlaylist != null) {
 
-      //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
-      const response = await axios.post('/api/getNextSong',
-        {
-          listID: currentPlaylist, type: currentPlayType,
-          currentNum: currentPlayTrackNum
-        });
+        //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
+        const response = await axios.post('/api/getNextSong',
+          {
+            listID: currentPlaylist, type: currentPlayType,
+            currentNum: currentPlayTrackNum
+          });
 
-      //TODO : 여기서 response 로 trackNum 을 가져와야 할것임 - 랜덤재생 위해서
-      const track = response.data;
-      const playNum = track.trackNum;
+        //TODO : 여기서 response 로 trackNum 을 가져와야 할것임 - 랜덤재생 위해서
+        const track = response.data;
+        const playNum = track.trackNum;
 
-      //현재 재생 트랙 번호를 다음 번호로 설정
-      setCurrentPlayTrackNum(playNum);
+        //현재 재생 트랙 번호를 다음 번호로 설정
+        setCurrentPlayTrackNum(playNum);
 
-      //받아온 트랙데이터로 플레이어 설정
-      setSelectedTrack(track);
+        //받아온 트랙데이터로 플레이어 설정
+        setSelectedTrack(track);
 
-      //플레이 url 받아오기
-      const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
-      setCurrentPlayUrl(urlInfo.data.videoUrl);
+        //플레이 url 받아오기
+        const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
+        setCurrentPlayUrl(urlInfo.data.videoUrl);
 
-      console.log("tracknum : " + currentPlayTrackNum);
+        console.log("tracknum : " + currentPlayTrackNum);
+
+      }
+
+
 
     }
 
+    //테스트용
+    const handleTestClick = () => {
+      console.log("클릭");
 
-
-  }
-
-  //테스트용
-  const handleTestClick = () => {
-    console.log("클릭");
-
-  };
+    };
 
 
 
-  return (
-    <div className="MusicControl">
-      <div className="PlayBar">
-        <div className="RangeBarBox">
-          <RangeBar
-            max={duration}
-            value={currentTime}
-            onChange={handleRangeBarChange}
-          />
+    return (
+      <div className="MusicControl">
+        <div className="PlayBar">
+          <div className="RangeBarBox">
+            <RangeBar
+              max={duration}
+              value={currentTime}
+              onChange={handleRangeBarChange}
+            />
+          </div>
+        </div>
+        <div className="PlayControl">
+          <div className="top">
+
+            <div className="button">
+              <TbPlayerTrackPrevFilled className="trackBtn" size={40} onClick={prevSong}/>
+            </div>
+
+
+            <div className="button">
+              {isPlaying ? (
+                <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause} />
+              ) : (
+                <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause} />
+              )}
+            </div>
+
+            <div className="button">
+              <TbPlayerTrackNextFilled className="trackBtn" size={40} onClick={nextSong}/>
+            </div>
+
+          </div >
+          <div className="bottom">
+
+            <div className="button">
+              <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist} />
+            </div>
+
+            <div className="button">
+              <TbHeart className="trackBtn" size={40} />
+            </div>
+
+            <div className="button">
+              <TbRepeat className="trackBtn" size={40} />
+            </div>
+
+          </div>
         </div>
       </div>
-      <div className="PlayControl">
-        <div className="top">
-
-          <div className="button">
-            <TbPlayerTrackPrevFilled className="trackBtn" size={40} />
-          </div>
-
-
-          <div className="button">
-            {isPlaying ? (
-              <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause} />
-            ) : (
-              <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause} />
-            )}
-          </div>
-
-          <div className="button">
-            <TbPlayerTrackNextFilled className="trackBtn" size={40} />
-          </div>
-
-        </div >
-        <div className="bottom">
-
-          <div className="button">
-            <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist} />
-          </div>
-
-          <div className="button">
-            <TbHeart className="trackBtn" size={40} />
-          </div>
-
-          <div className="button">
-            <TbRepeat className="trackBtn" size={40} />
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
+    );
 }
 
 export default MusicControl;

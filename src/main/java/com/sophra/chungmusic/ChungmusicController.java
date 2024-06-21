@@ -251,7 +251,7 @@ public class ChungmusicController {
 
                     int nextNum;
                     //맨 마지막곡이면 처음 곡 설정
-                    if(currentNum == tracks.size()){ nextNum = 0; }
+                    if(currentNum == tracks.size() - 1){ nextNum = 0; }
                     else { nextNum = currentNum + 1; }
 
                     System.out.println("실행 : " + nextNum);
@@ -333,7 +333,7 @@ public class ChungmusicController {
 
                     int nextNum;
                     //맨첫곡이면 마지막곡 설정
-                    if(currentNum == 0){ nextNum = tracks.size();}
+                    if(currentNum == 0){ nextNum = tracks.size() - 1;}
                     else { nextNum = currentNum - 1; }
 
                     System.out.println("실행 : " + nextNum);
