@@ -112,7 +112,7 @@ function MusicControl() {
     }
   }
 
-    //TODO : 오디오 맨끝이면 0번쨰 트랙 반환하게
+    //TODO : 한곡재생 구현해야함, 리스트 보여줘야함, 랜덤재생 버튼 만들어야함
 
     //다음 곡으로 넘어가기
     const nextSong = async () => {
