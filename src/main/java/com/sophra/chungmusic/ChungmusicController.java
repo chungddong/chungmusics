@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -203,7 +204,7 @@ public class ChungmusicController {
                 String videoUrl = tracks.get(i).getVideoUrl();
                 String thumbUrl = tracks.get(i).getThumbUrl();
 
-                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl,0);
                 stdlist.add(tempSTD);
             }
 
@@ -245,9 +246,13 @@ public class ChungmusicController {
                     System.out.println("요청 트랙 ID : " + tracks.get(i).getId()
                      + " 제목 : " + tracks.get(i).getTitle());
                 }
-                int nextNum = currentNum + 1;
                 
                 if (type == 0) {
+
+                    int nextNum;
+                    //맨 마지막곡이면 처음 곡 설정
+                    if(currentNum == tracks.size()){ nextNum = 0; }
+                    else { nextNum = currentNum + 1; }
 
                     System.out.println("실행 : " + nextNum);
                     Track nextTrack = tracks.get(nextNum);
@@ -258,12 +263,111 @@ public class ChungmusicController {
                     std.setThumbUrl(nextTrack.getThumbUrl());
                     std.setVideoUrl(nextTrack.getVideoUrl());
                     std.setTitle(nextTrack.getTitle());
+                    std.setTrackNum(nextNum);
 
                     return std;
                     
                 } else // 랜덤재생인 경우
                 {
-                    // TODO : 현재 번호 제외한 랜덤 번호 선택해서 반환
+                    Random random = new Random();
+                    int ranNum = random.nextInt(tracks.size());
+                    //중복 방지
+                    while (ranNum == currentNum) {
+                        ranNum = random.nextInt(tracks.size());
+                    }
+
+                    Track nextTrack = tracks.get(ranNum);
+
+                    std.setAuthor(nextTrack.getAuthor());
+                    std.setPlaytime(nextTrack.getPlaytime());
+                    std.setThumbUrl(nextTrack.getThumbUrl());
+                    std.setVideoUrl(nextTrack.getVideoUrl());
+                    std.setTitle(nextTrack.getTitle());
+                    std.setTrackNum(ranNum);
+
+                    return std;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return std;
+    }
+
+
+
+    // 사용자가 요청한 리스트의 다음곡을 반환
+    @PostMapping("/api/getPrevSong")
+    public SendTrackData getPrevTrack(@RequestBody Map<String, String> payload, HttpSession session) {
+
+        Users loginuser = (Users) session.getAttribute("user");
+        Optional<Users> user = usersService.findbyEmail(loginuser.getEmail());
+
+        SendTrackData std = new SendTrackData();
+
+        long listID = Long.parseLong(payload.get("listID"));
+        int type = Integer.parseInt(payload.get("type")); //TODO : enum 사용하기
+        int currentNum = Integer.parseInt(payload.get("currentNum"));
+
+        if (user != null) {
+            System.out.println("요청 리스트 ID : " + listID + " 타입 : " + type
+                    + " 현재 번호 : " + currentNum);
+
+            try {
+
+                Playlist selectlist = playlistRepository.findByid(listID);
+                //List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+                List<Track> tracks = trackRepository.findByPlaylistOrderById(selectlist, Sort.by(Sort.Direction.DESC, "id"));
+                
+
+                for(int i = 0; i < tracks.size(); i++)
+                {
+                    System.out.println("요청 트랙 ID : " + tracks.get(i).getId()
+                     + " 제목 : " + tracks.get(i).getTitle());
+                }
+                
+                if (type == 0) {
+
+                    int nextNum;
+                    //맨첫곡이면 마지막곡 설정
+                    if(currentNum == 0){ nextNum = tracks.size();}
+                    else { nextNum = currentNum - 1; }
+
+                    System.out.println("실행 : " + nextNum);
+                    Track nextTrack = tracks.get(nextNum);
+                    System.out.println(nextTrack.getTitle());
+
+                    std.setAuthor(nextTrack.getAuthor());
+                    std.setPlaytime(nextTrack.getPlaytime());
+                    std.setThumbUrl(nextTrack.getThumbUrl());
+                    std.setVideoUrl(nextTrack.getVideoUrl());
+                    std.setTitle(nextTrack.getTitle());
+                    std.setTrackNum(nextNum);
+
+                    return std;
+                    
+                } else // 랜덤재생인 경우
+                {
+                    Random random = new Random();
+                    int ranNum = random.nextInt(tracks.size());
+                    //중복 방지
+                    while (ranNum == currentNum) {
+                        ranNum = random.nextInt(tracks.size());
+                    }
+
+                    Track nextTrack = tracks.get(ranNum);
+
+                    std.setAuthor(nextTrack.getAuthor());
+                    std.setPlaytime(nextTrack.getPlaytime());
+                    std.setThumbUrl(nextTrack.getThumbUrl());
+                    std.setVideoUrl(nextTrack.getVideoUrl());
+                    std.setTitle(nextTrack.getTitle());
+                    std.setTrackNum(ranNum);
+
+                    return std;
                 }
 
             } catch (Exception e) {
@@ -341,7 +445,7 @@ public class ChungmusicController {
                 String playtime = track.getPlaytime();
                 String thumbUrl = track.getThumbUrl();
 
-                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl,0);
                 stdlist.add(tempSTD);
 
                 // HashSet에 추가하여 중복 체크용 데이터 갱신
@@ -370,7 +474,7 @@ public class ChungmusicController {
                 String videoUrl = trackslist.get(i).getUrl();
                 String thumbUrl = trackslist.get(i).getTrackMetadata().thumbNailUrl();
 
-                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl);
+                SendTrackData tempSTD = new SendTrackData(title, author, playtime, videoUrl, thumbUrl, 0);
                 stdlist.add(tempSTD);
                 // System.out.println(i + "번쨰" + ">>>" + title);
 

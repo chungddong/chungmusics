@@ -16,6 +16,7 @@ public class SendTrackData {
     private String playtime;
     private String videoUrl;
     private String thumbUrl;
+    private int trackNum;
 
     
 }
