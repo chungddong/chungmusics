@@ -11,7 +11,7 @@ import AddPlaylist from "../Components/AddPlaylist"; // AddPlaylist 컴포넌트
 function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [results, setResults] = useState([]);
-  const { setSelectedTrack, setCurrentPlayUrl } = useStore();
+  const { setSelectedTrack, setCurrentPlayUrl, setCurrentPlaylist } = useStore();
   const { addPlaylistTrack, setAddPlaylistTrack } = useStore();
   const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false); // 다이얼로그 상태 state
 
@@ -29,6 +29,7 @@ function Search() {
   const handleListItemClick = async (track) => {
     setSelectedTrack(track); 
     try {
+      setCurrentPlaylist(null);
       const response = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
       setCurrentPlayUrl(response.data.videoUrl);
     } catch (error) {
