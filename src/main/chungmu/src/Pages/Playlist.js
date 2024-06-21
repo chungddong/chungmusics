@@ -4,10 +4,15 @@ import '../css/Playlist.css';
 
 import UserBar from "../Components/UserBar";
 import TitleHeader from "../Components/TitleHeader";
+import useStore from '../js/store';
 
 function Playlist() {
 
     const [playlists, setPlaylists] = useState([]);
+
+    const { currentPlayTrackNum, setCurrentPlayTrackNum } = useStore();
+
+
 
     useEffect(() => {
         fetchPlaylists();
@@ -30,8 +35,14 @@ function Playlist() {
 
         try {
             //const response = await axios.post('/api/getSelectPlaylists', { query: playlist.id });
+            //현재 재생 트랙 번호를 0 번째로 설정
 
+            //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
             const response = await axios.post('/api/getNextSong', { listID: playlist.id, type: 0, currentNum : -1 });
+
+            setCurrentPlayTrackNum(0);
+
+            console.log(currentPlayTrackNum);
             //setCurrentPlayUrl(response.data.videoUrl);
             //setCurrentPlayUrl(response.data.videoUrl);
         } catch (error) {

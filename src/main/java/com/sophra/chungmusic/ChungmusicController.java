@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -235,7 +236,9 @@ public class ChungmusicController {
             try {
 
                 Playlist selectlist = playlistRepository.findByid(listID);
-                List<Track> tracks = trackRepository.findAllByOrderBylistDesc(selectlist);
+                //List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+                List<Track> tracks = trackRepository.findByPlaylistOrderById(selectlist, Sort.by(Sort.Direction.DESC, "id"));
+                
 
                 for(int i = 0; i < tracks.size(); i++)
                 {
