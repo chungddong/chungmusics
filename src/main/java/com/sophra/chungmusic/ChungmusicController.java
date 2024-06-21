@@ -246,7 +246,7 @@ public class ChungmusicController {
                      + " 제목 : " + tracks.get(i).getTitle());
                 }
                 int nextNum = currentNum + 1;
-
+                
                 if (type == 0) {
 
                     System.out.println("실행 : " + nextNum);

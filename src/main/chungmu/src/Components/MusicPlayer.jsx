@@ -30,6 +30,7 @@ function MusicPlayer() {
     setAddPlaylistTrack(track);
     setIsAddPlaylistOpen(true); // 다이얼로그 열기
   };
+  
 
   return (
     <div className="MusicPlayer">

@@ -47,12 +47,14 @@ function MusicControl() {
     playAudio();
   }, [currentPlayUrl]);
 
+  // seek바 변동 이벤트
   const handleRangeBarChange = (event) => {
     const newTime = event.target.value;
     setCurrentTime(newTime);
     audioElement.currentTime = newTime;
   };
 
+  // 음악 재생-플레이 기능
   const togglePlayPause = () => {
     if (isPlaying) {
       audioElement.pause();
@@ -61,6 +63,12 @@ function MusicControl() {
     }
     setIsPlaying(!isPlaying); // 재생 상태 토글
   };
+
+  //테스트용
+  const handleTestClick = () => {
+    console.log("클릭");
+    
+};
 
   return (
     <div className="MusicControl">
@@ -97,7 +105,7 @@ function MusicControl() {
         <div className="bottom">
 
           <div className="button">
-            <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist}/>
+            <TbPlaylist className="trackBtn" size={40} onClick={handleTestClick}/>
           </div>
 
           <div className="button">

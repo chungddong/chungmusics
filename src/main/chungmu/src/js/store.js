@@ -17,6 +17,10 @@ const useStore = create((set) => ({
   isOpenPlaylist: false,
   togglePlaylist: () => set(state => ({ isOpenPlaylist: !state.isOpenPlaylist })),
 
+  //현재 재생중인 재생목록
+  currentPlaylist : null,
+  setCurrentPlaylist : (num) => set({ currentPlaylist : num }),
+
   //현재 재생중인 트랙의 재생목록 순번
   currentPlayTrackNum : null,
   setCurrentPlayTrackNum : (num) => set({ currentPlayTrackNum : num })
