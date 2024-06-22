@@ -195,7 +195,7 @@ public class ChungmusicController {
             Playlist selectlist = playlistRepository.findByid(listID);
 
             // 선택된 리스트id 를 가진 모든 음악트랙 리스트 가져옴
-            List<Track> tracks = trackRepository.findByPlaylist(selectlist);
+            List<Track> tracks = trackRepository.findByPlaylistOrderById(selectlist, Sort.by(Sort.Direction.DESC, "id"));
 
             for (int i = 0; i < tracks.size(); i++) {
                 String title = tracks.get(i).getTitle();

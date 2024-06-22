@@ -26,7 +26,10 @@ function MusicControl() {
     const handleLoadedMetadata = () => setDuration(audioElement.duration);
     const handleTimeUpdate = () => setCurrentTime(audioElement.currentTime);
     const handleEnded = () => {
-      if (isRepeatOnce) {
+
+      console.log("isRepeatOnce : " + isRepeatOnce);
+      if (!isRepeatOnce) {
+        
         nextSong();
       }
     }
@@ -87,7 +90,7 @@ function MusicControl() {
 
   // 한곡 재생 켜고 끄기
   const toggleRepeatOnce = () => {
-    if (isRepeatOnce) {
+    if (!isRepeatOnce) {
       audioElement.loop = true;
     } else {
       audioElement.loop = false;
