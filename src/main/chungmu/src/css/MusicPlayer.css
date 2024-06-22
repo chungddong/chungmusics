@@ -85,10 +85,31 @@
 }
 
 .PlayListModal {
-    background-color: red;
     animation: slide-up 0.5s ease-out forwards;
 
 }
+
+.playlistHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+.playlistTitle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.MusicTitle, .MusicArtist {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* 최대 줄 수 */
+    -webkit-box-orient: vertical;
+    line-height: 1.2em; /* 줄 높이 */
+    max-height: 2.4em; /* 최대 높이: 줄 높이 * 최대 줄 수 */
+  }
 
 .playlistHeader {
     width: 44vh;

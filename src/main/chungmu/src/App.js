@@ -31,10 +31,12 @@ function App() {
 
     const handleResize = () => {
       const playerBox = document.querySelector('.PlayerBox');
-      if (window.innerWidth >= 800) {
-        playerBox.style.display = 'flex';
-      } else {
-        playerBox.style.display = 'none'; // 기본 display 설정
+      if (playerBox) { // playerBox 요소가 존재하는지 확인
+        if (window.innerWidth >= 800) {
+          playerBox.style.display = 'flex';
+        } else {
+          playerBox.style.display = 'none'; // 기본 display 설정
+        }
       }
     };
   

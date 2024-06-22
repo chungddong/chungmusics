@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   TbPlayerTrackPrevFilled, TbPlayerPlayFilled, TbPlayerPauseFilled,
-  TbPlayerTrackNextFilled, TbHeart, TbRepeat, TbPlaylist
+  TbPlayerTrackNextFilled, TbHeart, TbRepeat, TbPlaylist, TbRepeatOnce
 } from "react-icons/tb";
 import RangeBar from './RangeBar';
 import useStore from '../js/store';
@@ -15,6 +15,7 @@ function MusicControl() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRepeatOnce, setIsRepeatOnce] = useState(false);
   const audioElement = document.getElementById('globalAudio');
 
 
@@ -24,7 +25,11 @@ function MusicControl() {
   useEffect(() => {
     const handleLoadedMetadata = () => setDuration(audioElement.duration);
     const handleTimeUpdate = () => setCurrentTime(audioElement.currentTime);
-    const handleEnded = () => nextSong();
+    const handleEnded = () => {
+      if (isRepeatOnce) {
+        nextSong();
+      }
+    }
 
     audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
     audioElement.addEventListener('timeupdate', handleTimeUpdate);
@@ -80,6 +85,16 @@ function MusicControl() {
     setIsPlaying(!isPlaying); // 재생 상태 토글
   };
 
+  // 한곡 재생 켜고 끄기
+  const toggleRepeatOnce = () => {
+    if (isRepeatOnce) {
+      audioElement.loop = true;
+    } else {
+      audioElement.loop = false;
+    }
+    setIsRepeatOnce(!isRepeatOnce); // 재생 상태 토글
+  };
+
   //이전 곡으로 넘어가기
   const prevSong = async () => {
 
@@ -88,6 +103,42 @@ function MusicControl() {
 
       //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
       const response = await axios.post('/api/getPrevSong',
+        {
+          listID: currentPlaylist, type: currentPlayType,
+          currentNum: currentPlayTrackNum
+        });
+
+      const track = response.data;
+      const playNum = track.trackNum;
+
+      //현재 재생 트랙 번호를 다음 번호로 설정
+      setCurrentPlayTrackNum(playNum);
+
+      //받아온 트랙데이터로 플레이어 설정
+      setSelectedTrack(track);
+
+      //플레이 url 받아오기
+      const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
+      setCurrentPlayUrl(urlInfo.data.videoUrl);
+
+      console.log("tracknum : " + currentPlayTrackNum);
+
+    }
+  }
+
+  //TODO : 한곡재생 구현해야함, 리스트 보여줘야함, 랜덤재생 버튼 만들어야함
+
+  //다음 곡으로 넘어가기
+  const nextSong = async () => {
+    console.log("다음곡으로 넘어가야함");
+    console.log("현재 트랙 NUM : " + currentPlayTrackNum);
+    console.log("현재 재생목록 ID : " + currentPlaylist);
+
+    //현재 재생목록이 비어있지 않다면
+    if (currentPlaylist != null) {
+
+      //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
+      const response = await axios.post('/api/getNextSong',
         {
           listID: currentPlaylist, type: currentPlayType,
           currentNum: currentPlayTrackNum
@@ -110,106 +161,73 @@ function MusicControl() {
       console.log("tracknum : " + currentPlayTrackNum);
 
     }
+
+
+
   }
 
-    //TODO : 한곡재생 구현해야함, 리스트 보여줘야함, 랜덤재생 버튼 만들어야함
+  //테스트용
+  const handleTestClick = () => {
+    console.log("클릭");
 
-    //다음 곡으로 넘어가기
-    const nextSong = async () => {
-      console.log("다음곡으로 넘어가야함");
-      console.log("현재 트랙 NUM : " + currentPlayTrackNum);
-      console.log("현재 재생목록 ID : " + currentPlaylist);
-
-      //현재 재생목록이 비어있지 않다면
-      if (currentPlaylist != null) {
-
-        //다음곡 요청 -- 여기의 경우는 첫 곡 요청인데 컨트롤러 코드 재활용 위해 -1로 전송
-        const response = await axios.post('/api/getNextSong',
-          {
-            listID: currentPlaylist, type: currentPlayType,
-            currentNum: currentPlayTrackNum
-          });
-
-        //TODO : 여기서 response 로 trackNum 을 가져와야 할것임 - 랜덤재생 위해서
-        const track = response.data;
-        const playNum = track.trackNum;
-
-        //현재 재생 트랙 번호를 다음 번호로 설정
-        setCurrentPlayTrackNum(playNum);
-
-        //받아온 트랙데이터로 플레이어 설정
-        setSelectedTrack(track);
-
-        //플레이 url 받아오기
-        const urlInfo = await axios.post('http://studyswh.synology.me:32599/get-audio-url', { videoUrl: track.videoUrl });
-        setCurrentPlayUrl(urlInfo.data.videoUrl);
-
-        console.log("tracknum : " + currentPlayTrackNum);
-
-      }
+  };
 
 
 
-    }
-
-    //테스트용
-    const handleTestClick = () => {
-      console.log("클릭");
-
-    };
-
-
-
-    return (
-      <div className="MusicControl">
-        <div className="PlayBar">
-          <div className="RangeBarBox">
-            <RangeBar
-              max={duration}
-              value={currentTime}
-              onChange={handleRangeBarChange}
-            />
-          </div>
-        </div>
-        <div className="PlayControl">
-          <div className="top">
-
-            <div className="button">
-              <TbPlayerTrackPrevFilled className="trackBtn" size={40} onClick={prevSong}/>
-            </div>
-
-
-            <div className="button">
-              {isPlaying ? (
-                <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause} />
-              ) : (
-                <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause} />
-              )}
-            </div>
-
-            <div className="button">
-              <TbPlayerTrackNextFilled className="trackBtn" size={40} onClick={nextSong}/>
-            </div>
-
-          </div >
-          <div className="bottom">
-
-            <div className="button">
-              <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist} />
-            </div>
-
-            <div className="button">
-              <TbHeart className="trackBtn" size={40} />
-            </div>
-
-            <div className="button">
-              <TbRepeat className="trackBtn" size={40} />
-            </div>
-
-          </div>
+  return (
+    <div className="MusicControl">
+      <div className="PlayBar">
+        <div className="RangeBarBox">
+          <RangeBar
+            max={duration}
+            value={currentTime}
+            onChange={handleRangeBarChange}
+          />
         </div>
       </div>
-    );
+      <div className="PlayControl">
+        <div className="top">
+
+          <div className="button">
+            <TbPlayerTrackPrevFilled className="trackBtn" size={40} onClick={prevSong} />
+          </div>
+
+
+          <div className="button">
+            {isPlaying ? (
+              <TbPlayerPauseFilled className="trackBtn" size={40} onClick={togglePlayPause} />
+            ) : (
+              <TbPlayerPlayFilled className="trackBtn" size={40} onClick={togglePlayPause} />
+            )}
+          </div>
+
+          <div className="button">
+            <TbPlayerTrackNextFilled className="trackBtn" size={40} onClick={nextSong} />
+          </div>
+
+        </div >
+        <div className="bottom">
+
+          <div className="button">
+            <TbPlaylist className="trackBtn" size={40} onClick={togglePlaylist} />
+          </div>
+
+          <div className="button">
+            <TbHeart className="trackBtn" size={40} />
+          </div>
+
+          <div className="button">
+            {!isRepeatOnce ? (
+              <TbRepeat className="trackBtn" size={40} onClick={toggleRepeatOnce} />
+            ) : (
+              <TbRepeatOnce className="trackBtn" size={40} onClick={toggleRepeatOnce} />
+            )}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default MusicControl;

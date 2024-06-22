@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../css/MusicPlayer.css";
 import MusicControl from "../Components/MusicControl";
@@ -9,12 +9,31 @@ import { IoPlay } from "react-icons/io5";
 
 function MusicPlayer() {
   //TODO : 내일 플레이리스트 목록 가져와서 보여주기 해야함
-  const { selectedTrack, showMPlayer, isOpenPlaylist, togglePlaylist } = useStore();
+  const { selectedTrack, showMPlayer, isOpenPlaylist, togglePlaylist,
+    currentPlaylist } = useStore();
   const [results, setResults] = useState([]);
 
   const { setSelectedTrack, setCurrentPlayUrl } = useStore();
   const { addPlaylistTrack, setAddPlaylistTrack } = useStore();
   const [isAddPlaylistOpen, setIsAddPlaylistOpen] = useState(false);
+
+
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      try {
+        //console.log(currentPlaylist);
+        const response = await axios.post('/api/getSelectPlaylists', { query: currentPlaylist });
+        setResults(response.data);
+      } catch (error) {
+        console.error("Error fetching playlist", error);
+      }
+    };
+
+    if (isOpenPlaylist) {
+      fetchPlaylist();
+    }
+  }, [isOpenPlaylist, currentPlaylist]);
+
 
   const handleListItemClick = async (track) => {
     setSelectedTrack(track);
@@ -30,7 +49,7 @@ function MusicPlayer() {
     setAddPlaylistTrack(track);
     setIsAddPlaylistOpen(true); // 다이얼로그 열기
   };
-  
+
 
   return (
     <div className="MusicPlayer">
@@ -38,7 +57,7 @@ function MusicPlayer() {
         <div className='playerHeader'>
           <div className="HeaderBtn">
             <TbArrowBarToRight className='rightarrowBtn' size={35} onClick={() => document.querySelector('.PlayerBox').style.display = 'none'} />
-            
+
           </div>
         </div>
         <div className='MainBox'>
@@ -65,8 +84,13 @@ function MusicPlayer() {
 
           <div className="playlistHeader">
 
-            <h1>Playlist</h1>
-            <TbChevronDown className='playlistBtn' onClick={togglePlaylist} size={40} />
+            <div className="playlistTitle">
+
+              <h2>Playlist</h2>
+              <TbChevronDown className='playlistBtn' onClick={togglePlaylist} size={40} />
+
+
+            </div>
 
 
             <div className="ListContainer">

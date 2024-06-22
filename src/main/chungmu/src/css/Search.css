@@ -27,7 +27,6 @@
 }
 
 .ListContainer {
-    max-height: 50vh;
     overflow-y: auto; /* 수직 스크롤 활성화 */
   } 
 

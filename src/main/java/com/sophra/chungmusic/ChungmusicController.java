@@ -180,7 +180,7 @@ public class ChungmusicController {
     }
 
     // 사용자가 선택한 플레이리스트에 대한 모든 트랙리스트 반환
-    @GetMapping("/api/getSelectPlaylists")
+    @PostMapping("/api/getSelectPlaylists")
     public List<SendTrackData> getSelectPlaylists(HttpSession session, @RequestBody Map<String, String> payload) {
 
         // 세션 처리

@@ -1,5 +1,13 @@
+.Home
+{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
 .ListContainer {
-    max-height: 70vh;
+    flex-grow: 1;
     overflow-y: auto; /* 수직 스크롤 활성화 */
   } 
 
