@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.sophra</groupId>
 	<artifactId>chungmusic</artifactId>
@@ -28,15 +29,15 @@
 		</dependency>
 
 		<dependency>
-    		<groupId>org.json</groupId>
-    		<artifactId>json</artifactId>
-    		<version>20210307</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20210307</version>
 		</dependency>
 
 
 		<dependency>
-    		<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 
@@ -58,32 +59,30 @@
 		</dependency>
 
 		<dependency>
-	    	<groupId>com.github.felipeucelli</groupId>
-	    	<artifactId>javatube</artifactId>
-	    	<version>-57e0ae0f56-1</version>
+			<groupId>com.github.felipeucelli</groupId>
+			<artifactId>javatube</artifactId>
+			<version>-57e0ae0f56-1</version>
 		</dependency>
 
 		<dependency>
-    		<groupId>org.json</groupId>
-    		<artifactId>json</artifactId>
-    		<version>20231013</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20231013</version>
 		</dependency>
 
 		<dependency>
-    		<groupId>io.sfrei</groupId>
-    		<artifactId>tracksearch</artifactId>
-    		<version>0.10.1</version>
+			<groupId>io.sfrei</groupId>
+			<artifactId>tracksearch</artifactId>
+			<version>0.10.1</version>
 		</dependency>
-		
-		
 
 
 	</dependencies>
 
 	<repositories>
 		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
@@ -93,6 +92,69 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<configuration>
+					<workingDirectory>src/main/chungmu</workingDirectory>
+					<installDirectory>target</installDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v20.12.1</nodeVersion>
+							<npmVersion>10.5.0</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm run build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-resources</phase>
+						<configuration>
+							<target>
+								<copy todir="${project.build.directory}/classes/public">
+									<fileset dir="${project.basedir}/src/main/chungmu/build"/>
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+
 		</plugins>
 	</build>
 
